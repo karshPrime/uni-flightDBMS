@@ -69,3 +69,13 @@ CREATE TABLE `AirStaff` (
     FOREIGN KEY (`crewID`) REFERENCES `Crew`(`ID`),
 );
 
+--!-----------------------------------------------------!-- Auto Update Records --!---!--
+CREATE TRIGGER updateStaffCount
+AFTER INSERT ON AirStaff
+FOR EACH ROW
+BEGIN
+    DECLARE crew_count INT;
+    SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = NEW.crewID);
+    UPDATE Crew SET staffCount = crew_count WHERE ID = NEW.crewID;
+END;
+
