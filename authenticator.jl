@@ -1,2 +1,3 @@
 #! authenticate admin login
-#* return MySQL connection type.
+
+## https://mysql.juliadatabases.org/stable/
