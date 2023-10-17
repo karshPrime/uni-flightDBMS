@@ -4,6 +4,12 @@ CREATE DATABASE `control_db` DEFAULT CHARACTER SET utf8mb4;
 USE control_db;
 set autocommit=0;
 
+--!-----------------------------------------------------!-- Users & Roles --!---------!--
+CREATE USER 'sys'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
+CREATE USER 'executive'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
+
+CREATE ROLE rSy, rExecutive;
+
 --!-----------------------------------------------------!-- Create Table --!----------!--
 
 CREATE TABLE `Profile` (
@@ -38,3 +44,23 @@ CREATE TABLE `Logs` (
     PRIMARY KEY (`date`, `time`, `authorID`),
     FOREIGN KEY (`authorID`) REFERENCES `Profile`(`ID`)
 );
+
+--!-----------------------------------------------------!-- Roles & Permissions --!---!--
+
+-- for ethical reasons, no one should be able to edit system logs
+GRANT SELECT ON control_db.Logs TO rExecutive; -- executives can only view all logs
+GRANT INSERT ON control_db.Logs TO rSys; -- system can only append to the logs
+
+-- executives should, however, be able to view and edit all other employee related info.
+GRANT ALL ON control_db.Profile TO rExecutive;
+GRANT ALL ON control_db.Access TO rExecutive;
+GRANT ALL ON control_db.Authentication TO rExecutive;
+GRANT rExecutive to executive;
+
+-- system has only read certain data- data that is required for the program to operate.
+GRANT SELECT ON control_db.Authentication TO rSys;
+GRANT SELECT ON control_db.Access TO rSys;
+GRANT SELECT (ID, fName, lName) ON control_db.Profile TO rSys;
+GRANT rSys TO sys;
+
+FLUSH PRIVILEGES;
