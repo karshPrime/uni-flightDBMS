@@ -22,10 +22,6 @@ CREATE TABLE `Plane` (
     `capacity` INT NOT NULL DEFAULT 5000,
     `manufactureYear` INT NOT NULL,
     `journeys` INT NOT NULL,
-    CHECK (seats > 0),
-    CHECK (capacity > 0),
-    CHECK (journeys > 0),
-    CHECK (capacity > 1990),
     PRIMARY KEY (`ID`)
 );
 
@@ -58,8 +54,8 @@ CREATE TABLE `Flight` (
     `takeOffTime` TIME NOT NULL DEFAULT ('00:00:00'),
     `takeOffDate` DATE NOT NULL,
     `duration` TIME NOT NULL DEFAULT ('00:00:00'),
-    `hasVIP` BOOLEAN NOT NULL DEFAULT false,
-    `hasFood` BOOLEAN NOT NULL DEFAULT true,
+    `hasVIP` TINYINT(1) NOT NULL DEFAULT 0, -- TINYINT(1) is same as using boolean
+    `hasFood` TINYINT(1) NOT NULL DEFAULT 1,-- but is apparently more effecient
     PRIMARY KEY (`ID`),
     FOREIGN KEY (`planeID`) REFERENCES `Plane`(`ID`),
     FOREIGN KEY (`crewID`) REFERENCES `Crew`(`ID`)
@@ -74,10 +70,11 @@ CREATE TABLE `AirStaff` (
     `gender` enum('Male', 'Female') NOT NULL DEFAULT 'Male',
     `nativeLanguage` VARCHAR(15) NOT NULL DEFAULT 'English',
     PRIMARY KEY (`ID`),
-    FOREIGN KEY (`crewID`) REFERENCES `Crew`(`ID`),
+    FOREIGN KEY (`crewID`) REFERENCES `Crew`(`ID`)
 );
 
 --!-----------------------------------------------------!-- Auto Update Records --!---!--
+DELIMITER $$
 CREATE TRIGGER updateStaffCount
 AFTER INSERT ON AirStaff
 FOR EACH ROW
@@ -85,8 +82,8 @@ BEGIN
     DECLARE crew_count INT;
     SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = NEW.crewID);
     UPDATE Crew SET staffCount = crew_count WHERE ID = NEW.crewID;
-END;
-
+END $$
+DELIMITER ;
 
 --!-----------------------------------------------------!-- Roles & Permissions --!---!--
 
@@ -112,7 +109,7 @@ GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirSta
 GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
 GRANT rAssociate TO associate;
 
--- chief has SELECT, UPDATE and INSERT all tables
+-- chief has SELECT, UPDATE, and INSERT all tables
 GRANT ALL ON flight_db.* TO rChief;
 GRANT rChief TO chief;
 
