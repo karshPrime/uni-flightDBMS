@@ -8,7 +8,7 @@ set autocommit=0;
 CREATE USER 'sys'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
 CREATE USER 'executive'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
 
-CREATE ROLE rSy, rExecutive;
+CREATE ROLE rSys, rExecutive;
 
 --!-----------------------------------------------------!-- Create Table --!----------!--
 
@@ -16,14 +16,14 @@ CREATE TABLE `Profile` (
     `ID` INT NOT NULL AUTO_INCREMENT,
     `fName` CHAR(15) NOT NULL,
     `lName` CHAR(15) NOT NULL,
-    `gender` enum('Male', 'Female') NOT NULL DEFAULT 'Male';
+    `gender` ENUM('Male', 'Female') NOT NULL DEFAULT 'Male',
     `phone` CHAR(10) NOT NULL,
-    PRIMARY KEY (`ID`),
+    PRIMARY KEY (`ID`)
 );
 
 CREATE TABLE `Access` (
     `ID` INT NOT NULL,
-    `acessLvl` enum('helpdesk','associate','manager','executive') NOT NULL,
+    `accessLvl` ENUM('helpdesk','associate','manager','executive') NOT NULL,
     PRIMARY KEY (`ID`),
     FOREIGN KEY (`ID`) REFERENCES `Profile`(`ID`)
 );
@@ -63,7 +63,7 @@ GRANT INSERT ON control_db.Logs TO rSys; -- system can only append to the logs
 GRANT ALL ON control_db.Profile TO rExecutive;
 GRANT ALL ON control_db.Access TO rExecutive;
 GRANT ALL ON control_db.Authentication TO rExecutive;
-GRANT rExecutive to executive;
+GRANT rExecutive TO executive;
 
 -- system has only read certain data- data that is required for the program to operate.
 GRANT SELECT ON control_db.Authentication TO rSys;
