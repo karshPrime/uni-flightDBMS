@@ -74,6 +74,7 @@ CREATE TABLE `AirStaff` (
 );
 
 --!-----------------------------------------------------!-- Auto Update Records --!---!--
+-- method 1: automatic; will auto trigger whenever the crew table is modified.
 DELIMITER $$
 CREATE TRIGGER updateStaffCount
 AFTER INSERT ON AirStaff
@@ -84,6 +85,13 @@ BEGIN
     UPDATE Crew SET staffCount = crew_count WHERE ID = NEW.crewID;
 END $$
 DELIMITER ;
+
+-- method 2: must be manually executed every time changes are made; error-prone
+-- UPDATE `Crew` c SET `staffCount` = (
+--     SELECT COUNT(*) 
+--     FROM `AirStaff` a
+--     WHERE a.`crewID` = c.`ID`
+-- );
 
 --!-----------------------------------------------------!-- Roles & Permissions --!---!--
 
