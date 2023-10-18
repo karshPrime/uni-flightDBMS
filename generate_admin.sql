@@ -45,6 +45,14 @@ CREATE TABLE `Logs` (
     FOREIGN KEY (`authorID`) REFERENCES `Profile`(`ID`)
 );
 
+CREATE TABLE `Session` (
+    `userID` INT NOT NULL,
+    `token` CHAR(10) NOT NULL,
+    -- here while userID is just ID shared by other tables, 
+    -- this table isn't required to have any relation with other tables.
+    PRIMARY KEY (`userID`)
+);
+
 --!-----------------------------------------------------!-- Roles & Permissions --!---!--
 
 -- for ethical reasons, no one should be able to edit system logs
