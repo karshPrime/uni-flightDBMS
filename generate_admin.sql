@@ -1,13 +1,17 @@
 --! create admin database
 
-CREATE DATABASE `control_db` DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE control_db DEFAULT CHARACTER SET utf8mb4;
 USE control_db;
 set autocommit=0;
 
 --!-----------------------------------------------------!-- Users & Roles --!---------!--
-CREATE USER 'sys'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
-CREATE USER 'executive'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
+DROP USER IF EXISTS 'sys'@'%';
+CREATE USER 'sys'@'%' IDENTIFIED BY 'secretfornoonetoknow';
 
+DROP USER IF EXISTS 'executive'@'%';
+CREATE USER 'executive'@'%' IDENTIFIED BY 'secretfornoonetoknow';
+
+DROP ROLE IF EXISTS rSys, rExecutive;
 CREATE ROLE rSys, rExecutive;
 
 --!-----------------------------------------------------!-- Create Table --!----------!--

@@ -1,16 +1,24 @@
 --! create flight database
 
-CREATE DATABASE `flight_db` DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE flight_db DEFAULT CHARACTER SET utf8mb4;
 USE flight_db;
 set autocommit=0;
 
 --!-----------------------------------------------------!-- Users & Roles --!---------!--
-CREATE USER 'public'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
-CREATE USER 'helpdesk'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
-CREATE USER 'associate'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
-CREATE USER 'manager'@'localhost' IDENTIFIED BY 'secretfornoonetoknow';
+DROP USER IF EXISTS 'public'@'%';
+CREATE USER 'public'@'%' IDENTIFIED BY 'secretfornoonetoknow';
 
-CREATE ROLE rPublic, rHelpdesk, rAssociate, rChief;
+DROP USER IF EXISTS 'helpdesk'@'%';
+CREATE USER 'helpdesk'@'%' IDENTIFIED BY 'secretfornoonetoknow';
+
+DROP USER IF EXISTS 'associate'@'%';
+CREATE USER 'associate'@'%' IDENTIFIED BY 'secretfornoonetoknow';
+
+DROP USER IF EXISTS 'manager'@'%';
+CREATE USER 'manager'@'%' IDENTIFIED BY 'secretfornoonetoknow';
+
+DROP ROLE IF EXISTS rPublic, rHelpdesk, rAssociate, rManager;
+CREATE ROLE rPublic, rHelpdesk, rAssociate, rManager;
 
 --!-----------------------------------------------------!-- Create Table --!----------!--
 
@@ -117,8 +125,8 @@ GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirSta
 GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
 GRANT rAssociate TO associate;
 
--- chief has SELECT, UPDATE, and INSERT all tables
-GRANT ALL ON flight_db.* TO rChief;
-GRANT rChief TO chief;
+-- manager has SELECT, UPDATE, and INSERT all tables
+GRANT ALL ON flight_db.* TO rManager;
+GRANT rManager TO manager;
 
 FLUSH PRIVILEGES;
