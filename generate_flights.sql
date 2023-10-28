@@ -135,4 +135,6 @@ GRANT ALL ON flight_db.* TO rManager;
 GRANT rManager TO manager;
 SET DEFAULT ROLE rManager TO manager;
 
+GRANT rManager TO executive;
+
 FLUSH PRIVILEGES;
