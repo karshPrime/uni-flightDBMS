@@ -41,6 +41,42 @@ end
 
 #? the main function
 function main()
+    Lib.banner("Admin") # print program banner
+
+    while true # user cannot continue without successful login
+        credentials = login()
+        status = Auth.authenticate(credentials)
+        
+        if status == 1
+            printstyled("< ! AUTHENTICATION FAIL ! >\n\n"; color = :red)
+        else
+            (connection, username, accessLvl) = Auth.connect(credentials[1], status)
+            printstyled("Welcome $usernname!"; color = :yellow)
+            break # stop loop if login was successful
+        end
+    end
+
+    while true
+        user_input = Lib.take_input("[$username | $accessLvl]") # [Bob Dayne|Manager]
+
+        if user_input == "x"
+            printstyled("Goodbye~\n"; color = :light_blue)
+            break
+        end
+
+        if user_input == "?"
+            help_menu(accessLvl)
+            continue
+        end
+
+        sql_cmd = understand_input(user_input, accessLvl)
+        
+        if sql_cmd[1] == true
+            run_cmd(sql_cmd[2], "connection")
+        else
+            Lib.print_error(sql_cmd[2])
+        end
+    end
 end
 
 main()
