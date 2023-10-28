@@ -31,5 +31,7 @@ module Lib
     end
     
     function print_error(prompt)
+        printstyled(prompt; color = :red)
+        println("") # blank line
     end
 end
