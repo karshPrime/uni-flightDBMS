@@ -93,6 +93,10 @@ end
 
 #? Understand user command
 function run_cmd(command, connection, fTable)
+    #! FOR DEBUGING
+    #printstyled(command; color = :green)
+    #println("\n\n") # blank line
+    
     result = DBInterface.fetch(DBInterface.execute(connection, command))
     
     if fTable == true
