@@ -66,6 +66,41 @@ module Auth
 
     #? generate connection with database as stated user
     function connect(userid, token)
+        appConnect = _connect_as_app()
+
+        getStoredToken = """SELECT token FROM Session WHERE userID="$userid";"""
+        storedToken = _readSQL(DBInterface.execute(appConnect, getStoredToken))
+
+        if storedToken == token
+            token_expire = """DELETE FROM Session WHERE userID="$userid";"""
+            DBInterface.execute(appConnect, token_expire)
+
+            getAccess = """SELECT accessLvl from Access WHERE ID="$userid";"""
+            accessLvl = _readSQL(DBInterface.execute(appConnect, getAccess))
+
+            getfName = """SELECT fName from Profile WHERE ID="$userid";"""
+            fname = _readSQL(DBInterface.execute(appConnect, getfName))
+    
+            getlName = """SELECT lName from Profile WHERE ID="$userid";"""
+            lname = _readSQL(DBInterface.execute(appConnect, getlName))
+
+            DBInterface.close!
+
+            #? connect with the database with allowed access level to the user
+            flightConnect = DBInterface.connect(MySQL.Connection, 
+                _host, 
+                accessLvl, 
+                "secretfornoonetoknow", 
+                db="flight_db"
+            )
+
+            return (flightConnect, fname * ' ' * lname, accessLvl)
+        end
+
+        DBInterface.close!
+
+        printstyled("! AUTHENTICATION FAILED. MODIFIED INTERFACE DETECTED !\n"; color = :red)
+        return "ERROR" # will break the interface program
     end
 
     function log(authorID, action, record)
