@@ -31,6 +31,18 @@ module Auth
         return join([charset[rand(1:end)] for _ in 1:10])
     end
 
+    #? scrape MySQL output to extract relevant part
+    function _readSQL(rawReturn)
+        table = DBInterface.fetch(rawReturn)
+        
+        content = ""
+        for row in table
+            content = row[1]
+        end
+        
+        return content
+    end
+
     #? check if entered password is infact right
     function authenticate(userID, userPass)
         appConnect = _connect_as_app()
