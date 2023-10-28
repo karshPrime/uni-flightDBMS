@@ -8,7 +8,7 @@ module Auth
     _host = "172.17.0.2" #* host IP
 
     #? only allowing these functions to be accessiable from other files
-    export authenticate, connect, log
+    export authenticate, connect, log, public
 
     #? connect with the admin database as system
     #! private function; can be accessed only from within this file
@@ -108,7 +108,18 @@ module Auth
 
         appConnect = _connect_as_app()
         DBInterface.execute(appConnect, command)
-        
+
         DBInterface.close!
+    end
+
+    function public()
+        publicConnect = DBInterface.connect(MySQL.Connection, 
+            _host, 
+            "public", 
+            "secretfornoonetoknow", 
+            db="flight_db"
+        )
+
+        return publicConnect
     end
 end
