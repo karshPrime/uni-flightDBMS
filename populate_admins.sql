@@ -1,7 +1,7 @@
 --! populate the admin database with sample entries
 
 USE control_db;
-set autocommit=0;
+set autocommit=1;
 
 --* profiles
 INSERT INTO `Profile` (`ID`,`fName`,`lName`,`gender`,`phone`)

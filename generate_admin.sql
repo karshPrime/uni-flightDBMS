@@ -2,7 +2,7 @@
 
 CREATE DATABASE control_db DEFAULT CHARACTER SET utf8mb4;
 USE control_db;
-set autocommit=0;
+set autocommit=1;
 
 --!-----------------------------------------------------!-- Users & Roles --!---------!--
 DROP USER IF EXISTS 'sys'@'%';

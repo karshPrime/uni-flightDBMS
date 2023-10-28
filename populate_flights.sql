@@ -1,7 +1,7 @@
 --! populate the flight database with sample entries
 
 USE flight_db;
-set autocommit=0;
+set autocommit=1;
 
 --* Planes
 INSERT INTO `Planes` (`ID`,`airlines`,`model`,`seats`,`capacity`,`manufactureYear`,`journeys`)
