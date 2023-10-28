@@ -9,6 +9,12 @@ using .Lib
 
 #? login prompt
 function login()
+    printstyled("User ID  > "; color = :green)
+    username = readline()
+    printstyled("Password > "; color = :green)
+    password = readline()
+
+    return (username, password)
 end
 
 #? print help menu showing all possible commands for the loggedin user
