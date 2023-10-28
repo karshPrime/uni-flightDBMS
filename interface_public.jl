@@ -93,6 +93,61 @@ end
 
 #? Understand user command
 function run_cmd(command, connection, fTable)
+    result = DBInterface.fetch(DBInterface.execute(connection, command))
+    
+    if fTable == true
+        heading = "| Departure       | Destination     | Take Off | Date       | Duration | Food  |"
+        printstyled(heading; color = :yellow)
+        println("") # blank line
+
+        border = "|-----------------|-----------------|----------|------------|----------|-------|"
+        printstyled(border; color = :yellow)
+        println("") # blank line
+
+        for row in result
+            # fetch values from each row
+            departure = row[:departure]
+            destination = row[:destination]
+            takeOffTime = row[:takeOffTime]
+            takeOffDate = row[:takeOffDate]
+            duration = row[:duration]
+
+            # based on your MySQL schema, the "hasFood" might be a numeral field.
+            # In such case, convert it into a Boolean value here
+            hasFood = row[:hasFood] == 1 ? true : false
+
+            # print each row in the desired format
+            formatted_row = @sprintf("| %-15s | %-15s | %-8s | %-10s | %-8s | %-5s |", 
+                departure, 
+                destination, 
+                takeOffTime, 
+                takeOffDate, 
+                duration, 
+                hasFood ? "True" : "False"
+            )
+
+            printstyled(formatted_row, color = :light_cyan)
+            println("")  # New line after each row
+        end
+    else
+        heading = "| ID    | Airlines             | Model                   |"
+        printstyled(heading; color = :yellow)
+        println("")
+
+        border = "|-------|----------------------|-------------------------|"
+        printstyled(border; color = :yellow)
+        println("")
+
+        for row in result
+            planeid = row[:ID]
+            airlines = row[:airlines]
+            model = row[:model]
+
+            formatted_row = @sprintf("| %-5s | %-20s | %-23s |", planeid, airlines, model)
+            printstyled(formatted_row, color = :light_cyan)
+            println("")
+        end
+    end
 end
 
 #? the main function
