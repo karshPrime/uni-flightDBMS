@@ -69,5 +69,13 @@ module Auth
     end
 
     function log(authorID, action, record)
+        date = ""   #todo get today's date
+        time = ""   #todo get current time
+        command = """INSERT INTO `Logs` VALUES ('$date', '$time', '$authorID', '$action', '$record')"""
+
+        appConnect = _connect_as_app()
+        DBInterface.execute(appConnect, command)
+        
+        DBInterface.close!
     end
 end
