@@ -13,6 +13,41 @@ using .Lib
 
 #? print help menu showing all possible commands
 function help_menu()
+    prompt = """
+    Available Commands:
+    
+    1. `flights`: Show all available flights.
+       Example: `flights`
+    
+    2. `flights on yyyy-mm-dd`: Show all flights on a specific date.
+       Example: `flights on 2023-10-15`
+    
+    3. `flights to "location"`: Show all flights going to a specified location.
+       Example: `flights to Paris`
+    
+    4. `flights from "location"`: Show all flights departing from a specified location.
+       Example: `flights from New York`
+    
+    5. `flights with Food`: Show all flights serving food.
+       Example: `flights with Food`
+    
+    6. `flights without Food`: Show all flights not serving food.
+       Example: `flights without Food`
+    
+    7. `planes` : Show the list of all planes.
+       Example: `planes`
+    
+    8. `plane {id}`: Show details of a specific plane by its ID.
+       Example: `plane 123`
+
+    
+    You can combine commands for more specific queries:
+    
+    - To find flights on a specific date to a particular location that serve food:
+      Example: `flights on 2023-10-15 to "Paris" with Food`
+    """
+
+    printstyled(prompt; color = :light_green)
 end
 
 #? Understand user command
