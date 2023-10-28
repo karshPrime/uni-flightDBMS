@@ -40,6 +40,7 @@ CREATE TABLE `Pilot` (
     `age` INT CHECK (age BETWEEN 18 AND 60),
     `gender` enum('Male', 'Female') NOT NULL DEFAULT 'Male',
     `nationality` VARCHAR(25) NOT NULL DEFAULT 'Australian',
+    `flightCount` INT,
     PRIMARY KEY (`ID`)
 );
 
@@ -62,6 +63,7 @@ CREATE TABLE `Flight` (
     `takeOffTime` TIME NOT NULL DEFAULT ('00:00:00'),
     `takeOffDate` DATE NOT NULL,
     `duration` TIME NOT NULL DEFAULT ('00:00:00'),
+    `routeType` enum('domestic', 'international') NOT NULL DEFAULT 'domestic',
     `hasVIP` TINYINT(1) NOT NULL DEFAULT 0, -- TINYINT(1) is same as using boolean
     `hasFood` TINYINT(1) NOT NULL DEFAULT 1,-- but is apparently more effecient
     PRIMARY KEY (`ID`),

@@ -4,7 +4,7 @@ USE flight_db;
 set autocommit=1;
 
 --* Planes
-INSERT INTO `Planes` (`ID`,`airlines`,`model`,`seats`,`capacity`,`manufactureYear`,`journeys`)
+INSERT INTO `Plane` (`ID`,`airlines`,`model`,`seats`,`capacity`,`manufactureYear`,`journeys`)
 VALUES
 ('90001', 'Delta Air Lines', 'Boeing 737', '160', '5000', '2015', '237'),
 ('90002', 'American Airlines', 'Airbus A320', '180', '5500', '2017', '192'),
@@ -18,7 +18,7 @@ VALUES
 ('90010', 'Singapore Airlines', 'Airbus A350', '330', '7700', '2017', '122');
 
 --* Pilots
-INSERT INTO `Pilot` (`ID`,`fName`,`lName`,`age`,`gender`,`Nationality`)
+INSERT INTO `Pilot` (`ID`,`fName`,`lName`,`age`,`gender`,`nationality`, `flightCount`)
 VALUES
 ('20001', 'Olivia', 'Smith', '32', 'Female', 'Australian', '454'),
 ('20002', 'William', 'Johnson', '29', 'Male', 'Australian', '322'),
@@ -42,7 +42,7 @@ VALUES
 ('20020', 'Emma', 'Davis', '32', 'Female', 'German', '323');
 
 --* Crew
-INSERT INTO `Crew` (`ID`,`pilotID`,`coPilotID`,`staffCount`)
+INSERT INTO `Crew` (`ID`,`pilotID`,`coPilotID`)
 VALUES
 ('10001', '20001', '20002'),
 ('10002', '20016', '20006'),
@@ -56,24 +56,24 @@ VALUES
 ('10010', '20004', '20017');
 
 --* Flights
-INSERT INTO 'Flight' (`ID`,`planeID`,`crewID`,`departure`,`destination`,`takeOffTime`,`takeOffDate`,`duration`,`routeType`,`hasVIP`,`hasFood`)
+INSERT INTO `Flight` (`ID`,`planeID`,`crewID`,`departure`,`destination`,`takeOffTime`,`takeOffDate`,`duration`,`routeType`,`hasVIP`,`hasFood`)
 VALUES
-('00001', '90004', '10005', 'New York', 'Los Angeles', '08:30:00', '2023-10-15', '05:30:00', 'domestic', 'false', 'true'),
-('00002', '90008', '10003', 'London', 'Paris', '10:15:00', '2023-10-16', '01:30:00', 'international', 'false', 'true'),
-('00003', '90003', '10010', 'Tokyo', 'Seoul', '09:45:00', '2023-10-17', '02:30:00', 'international', 'false', 'false'),
-('00004', '90005', '10005', 'Los Angeles', 'San Francisco', '08:00:00', '2023-10-18', '01:15:00', 'domestic', 'true', 'true'),
-('00005', '90001', '10006', 'Sydney', 'Melbourne', '11:00:00', '2023-10-19', '01:45:00', 'domestic', 'false', 'true'),
-('00006', '90007', '10008', 'Paris', 'Amsterdam', '09:30:00', '2023-10-20', '01:45:00', 'international', 'false', 'false'),
-('00007', '90009', '10002', 'Chicago', 'Miami', '07:45:00', '2023-10-21', '03:00:00', 'domestic', 'true', 'true'),
-('00008', '90006', '10004', 'Berlin', 'Vienna', '10:30:00', '2023-10-22', '01:45:00', 'international', 'false', 'true'),
-('00009', '90002', '10007', 'Beijing', 'Shanghai', '09:15:00', '2023-10-23', '02:00:00', 'international', 'false', 'false'),
-('00010', '90010', '10009', 'Rome', 'Barcelona', '08:30:00', '2023-10-24', '01:30:00', 'international', 'false', 'true'),
-('00011', '90005', '10005', 'San Francisco', 'Los Angeles', '12:00:00', '2023-10-25', '01:15:00', 'domestic', 'false', 'true'),
-('00012', '90003', '10010', 'Seoul', 'Tokyo', '13:30:00', '2023-10-26', '02:30:00', 'international', 'false', 'false'),
-('00013', '90001', '10001', 'Sydney', 'Brisbane', '10:15:00', '2023-10-27', '02:00:00', 'domestic', 'true', 'true'),
-('00014', '90006', '10004', 'Vienna', 'Zurich', '11:45:00', '2023-10-28', '01:30:00', 'international', 'false', 'false'),
-('00015', '90008', '10004', 'Paris', 'Barcelona', '12:30:00', '2023-10-29', '01:45:00', 'international', 'false', 'true'),
-('00016', '90008', '10008', 'Melbourne', 'Moscow', '16:30:00', '2023-11-01', '14:45:00', 'international', 'true', 'true');
+('00001', '90004', '10005', 'New York', 'Los Angeles', '08:30:00', '2023-10-15', '05:30:00', 'domestic', '0', '1'),
+('00002', '90008', '10003', 'London', 'Paris', '10:15:00', '2023-10-16', '01:30:00', 'international', '0', '1'),
+('00003', '90003', '10010', 'Tokyo', 'Seoul', '09:45:00', '2023-10-17', '02:30:00', 'international', '0', '0'),
+('00004', '90005', '10005', 'Los Angeles', 'San Francisco', '08:00:00', '2023-10-18', '01:15:00', 'domestic', '1', '1'),
+('00005', '90001', '10006', 'Sydney', 'Melbourne', '11:00:00', '2023-10-19', '01:45:00', 'domestic', '0', '1'),
+('00006', '90007', '10008', 'Paris', 'Amsterdam', '09:30:00', '2023-10-20', '01:45:00', 'international', '0', '0'),
+('00007', '90009', '10002', 'Chicago', 'Miami', '07:45:00', '2023-10-21', '03:00:00', 'domestic', '1', '1'),
+('00008', '90006', '10004', 'Berlin', 'Vienna', '10:30:00', '2023-10-22', '01:45:00', 'international', '0', '1'),
+('00009', '90002', '10007', 'Beijing', 'Shanghai', '09:15:00', '2023-10-23', '02:00:00', 'international', '0', '0'),
+('00010', '90010', '10009', 'Rome', 'Barcelona', '08:30:00', '2023-10-24', '01:30:00', 'international', '0', '1'),
+('00011', '90005', '10005', 'San Francisco', 'Los Angeles', '12:00:00', '2023-10-25', '01:15:00', 'domestic', '0', '1'),
+('00012', '90003', '10010', 'Seoul', 'Tokyo', '13:30:00', '2023-10-26', '02:30:00', 'international', '0', '0'),
+('00013', '90001', '10001', 'Sydney', 'Brisbane', '10:15:00', '2023-10-27', '02:00:00', 'domestic', '1', '1'),
+('00014', '90006', '10004', 'Vienna', 'Zurich', '11:45:00', '2023-10-28', '01:30:00', 'international', '0', '0'),
+('00015', '90008', '10004', 'Paris', 'Barcelona', '12:30:00', '2023-10-29', '01:45:00', 'international', '0', '1'),
+('00016', '90008', '10008', 'Melbourne', 'Moscow', '16:30:00', '2023-11-01', '14:45:00', 'international', '1', '1');
 
 --* AirStaff
 INSERT INTO `AirStaff` (`ID`,`crewID`,`fName`,`lName`,`age`,`gender`,`nativeLanguage`) 
