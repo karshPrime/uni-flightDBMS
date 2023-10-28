@@ -24,6 +24,10 @@ module Lib
     
     #? get user input
     function take_input(identify)
+        printstyled("\n$identify "; color = :blue)
+        user_input = readline()
+    
+        return lowercase(user_input)
     end
     
     function print_error(prompt)
