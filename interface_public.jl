@@ -52,6 +52,43 @@ end
 
 #? Understand user command
 function understand_input(input)
+    words = Lib.break_input(input)
+
+    if length(words) == 0
+        return (false, "") # print nothing for blank input but accept that as error
+    end
+
+    if words[1] == "flights"
+        sql_cmd = "SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM Flight"
+
+        for i in 1:length(words)
+            if words[i] == "from" && i < length(words)
+                sql_cmd = Lib.generate_sql(sql_cmd, "departure", words[i + 1], 86)
+            elseif words[i] == "to" && i < length(words)
+                sql_cmd = Lib.generate_sql(sql_cmd, "destination", words[i + 1], 86)
+            elseif words[i] == "on" && i < length(words)
+                sql_cmd = Lib.generate_sql(sql_cmd, "takeOffDate", words[i + 1], 86)
+            elseif words[i] == "with" && i < length(words) && words[i + 1] == "food"
+                sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "1", 86)
+            elseif words[i] == "without" && i < length(words) && words[i + 1] == "food"
+                sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "0", 86)
+            end
+        end
+
+        sql_cmd = sql_cmd * ';'
+        return (true, sql_cmd, true)
+
+    elseif words[1] == "planes"
+        sql_cmd = "SELECT ID, airlines, model FROM Plane"
+        if length(words) > 1
+            sql_cmd = sql_cmd * " WHERE ID='" * words[1+1] * "';"
+        end
+
+        return (true, sql_cmd, false)
+
+    else
+        return (false, "invalid input")
+    end
 end
 
 #? Understand user command
