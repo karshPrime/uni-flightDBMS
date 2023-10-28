@@ -106,6 +106,7 @@ DELIMITER ;
 GRANT SELECT (ID, airlines, model) ON flight_db.Plane TO rPublic;
 GRANT SELECT (departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rPublic;
 GRANT rPublic TO public;
+SET DEFAULT ROLE rPublic TO public;
 
 GRANT SELECT (ID, airlines, model, seats, capacity) ON flight_db.Plane TO rHelpdesk;
 GRANT SELECT (ID, fName, lName, age, gender) ON flight_db.Pilot TO rHelpdesk;
@@ -113,6 +114,7 @@ GRANT SELECT (ID, pilotID, coPilotID, staffCount) ON flight_db.Crew TO rHelpdesk
 GRANT SELECT (ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rHelpdesk;
 GRANT SELECT (ID, crewID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rHelpdesk;
 GRANT rHelpdesk TO helpdesk;
+SET DEFAULT ROLE rHelpdesk TO helpdesk;
 
 GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; -- view all
 GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; -- view all
@@ -124,9 +126,11 @@ GRANT INSERT ON flight_db.Flight TO rAssociate;
 GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rAssociate;
 GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
 GRANT rAssociate TO associate;
+SET DEFAULT ROLE rAssociate TO associate;
 
 -- manager has SELECT, UPDATE, and INSERT all tables
 GRANT ALL ON flight_db.* TO rManager;
 GRANT rManager TO manager;
+SET DEFAULT ROLE rManager TO manager;
 
 FLUSH PRIVILEGES;

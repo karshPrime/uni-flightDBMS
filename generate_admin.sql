@@ -68,11 +68,13 @@ GRANT ALL ON control_db.Profile TO rExecutive;
 GRANT ALL ON control_db.Access TO rExecutive;
 GRANT ALL ON control_db.Authentication TO rExecutive;
 GRANT rExecutive TO executive;
+SET DEFAULT ROLE rExecutive TO executive;
 
 -- system has only read certain data- data that is required for the program to operate.
 GRANT SELECT ON control_db.Authentication TO rSys;
 GRANT SELECT ON control_db.Access TO rSys;
 GRANT SELECT (ID, fName, lName) ON control_db.Profile TO rSys;
 GRANT rSys TO sys;
+SET DEFAULT ROLE rSys TO sys;
 
 FLUSH PRIVILEGES;
