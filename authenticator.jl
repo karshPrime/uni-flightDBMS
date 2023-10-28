@@ -1,12 +1,10 @@
 #! authenticate admin login
 #* return MySQL connection type.
 
-## https://mysql.juliadatabases.org/stable/
-
-using MySQL
-using DBInterface
-
 module Auth
+    using MySQL
+    using DBInterface
+    
     _host = "172.17.0.2" #* host IP
 
     #? only allowing these functions to be accessiable from other files
