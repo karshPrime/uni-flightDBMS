@@ -32,7 +32,24 @@ module Auth
     end
 
     #? check if entered password is infact right
-    function authenticate(creds)
+    function authenticate(userID, userPass)
+        appConnect = _connect_as_app()
+
+        getPass = """SELECT password from Authentication WHERE id="$userID";"""
+        realPass = _readSQL(DBInterface.execute(appConnect, getPass))
+
+        if realPass == userPass
+            session_token = _token_gen()
+
+            buffer_token_cmd = """INSERT INTO Session VALUES ("$userID", "$session_token");"""
+            DBInterface.execute(appConnect, buffer_token_cmd)
+            DBInterface.close!
+
+            return session_token
+        end
+
+        DBInterface.close!
+        return 1 # failed to authenticate
     end
 
     #? generate connection with database as stated user
