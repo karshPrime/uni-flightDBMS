@@ -16,6 +16,32 @@ module Lib
     #? break user input into words and phrases
     #* using this over Julia's inbuilt split function to have multiworded cities like 'New York' as one element
     function break_input(input::AbstractString)
+        in_quote = false
+        current_word = ""
+        result = []
+    
+        for char in input
+            if char == ' ' && !in_quote
+                if current_word != ""
+                    push!(result, current_word)
+                    current_word = ""
+                end
+            elseif char == '\''
+                in_quote = !in_quote
+                if current_word != ""
+                    push!(result, current_word)
+                    current_word = ""
+                end
+            else
+                current_word *= string(char)
+            end
+        end
+    
+        if current_word != ""
+            push!(result, current_word)
+        end
+    
+        return result
     end
     
     #? generate SQL command for passed parameters
