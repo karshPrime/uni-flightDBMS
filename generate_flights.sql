@@ -123,7 +123,7 @@ GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; -- view all
 GRANT SELECT (ID, staffCount) ON flight_db.Crew TO rAssociate;
 GRANT SELECT, UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
 GRANT SELECT (ID, hasVIP) ON flight_db.Flight TO rAssociate;
-GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rAssociate;
+GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
 GRANT INSERT ON flight_db.Flight TO rAssociate;
 GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rAssociate;
 GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
