@@ -53,32 +53,32 @@ end
 #? Understand user command
 function understand_input(userInput)
     if userInput[1] == "flights"
-        sql_cmd = "SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM Flight"
+        sqlCmd = "SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM Flight"
 
         for i in 1:length(userInput)
             if userInput[i] == "from"
-                sql_cmd = Lib.generate_sql(sql_cmd, "departure", userInput[i + 1], 86)
+                sqlCmd = Lib.generate_sql(sqlCmd, "departure", userInput[i + 1], 86)
             elseif userInput[i] == "to"
-                sql_cmd = Lib.generate_sql(sql_cmd, "destination", userInput[i + 1], 86)
+                sqlCmd = Lib.generate_sql(sqlCmd, "destination", userInput[i + 1], 86)
             elseif userInput[i] == "on"
-                sql_cmd = Lib.generate_sql(sql_cmd, "takeOffDate", userInput[i + 1], 86)
+                sqlCmd = Lib.generate_sql(sqlCmd, "takeOffDate", userInput[i + 1], 86)
             elseif userInput[i] == "with" && userInput[i + 1] == "food"
-                sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "1", 86)
+                sqlCmd = Lib.generate_sql(sqlCmd, "hasFood", "1", 86)
             elseif userInput[i] == "without" && userInput[i + 1] == "food"
-                sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "0", 86)
+                sqlCmd = Lib.generate_sql(sqlCmd, "hasFood", "0", 86)
             end
         end
 
-        sql_cmd = sql_cmd * ';'
-        return sql_cmd
+        sqlCmd = sqlCmd * ';'
+        return sqlCmd
 
     elseif userInput[1] == "planes"
-        sql_cmd = "SELECT ID, airlines, model FROM Plane"
+        sqlCmd = "SELECT ID, airlines, model FROM Plane"
         if length(userInput) > 1
-            sql_cmd = sql_cmd * " WHERE ID='" * userInput[1+1] * "';"
+            sqlCmd = sqlCmd * " WHERE ID='" * userInput[1+1] * "';"
         end
 
-        return sql_cmd
+        return sqlCmd
 
     else
         return 1
@@ -169,12 +169,12 @@ function main()
                 continue
             end
 
-            sql_cmd = understand_input(userInput)
+            sqlCmd = understand_input(userInput)
 
-            if sql_cmd == 1
+            if sqlCmd == 1
                 Lib.print_error("invalid input")
             else
-                run_cmd(sql_cmd, connection, userInput[1]=="flights")
+                run_cmd(sqlCmd, connection, userInput[1]=="flights")
             end
         end
     end
