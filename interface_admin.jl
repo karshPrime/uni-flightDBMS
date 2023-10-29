@@ -14,11 +14,11 @@ function login()
     printstyled("Password > "; color = :red)
     userpass = readline()
 
-    return (username, password)
+    return (userid, userpass)
 end
 
 #? print help menu showing all possible commands for the loggedin user
-function help_menu(user)
+function help_menu(access, option)
     #* helpdesk = 0 | associate = 1 | manager = 2 | executive = 3
     helpDetails = (
         0, "?", "{OPTION}", 
@@ -137,13 +137,14 @@ end
 #? Understand user command
 function understand_input(input, user)
     words = break_input(input)
+    #
 end
 
 #? execute the requested MySQL command
 function run_cmd(command, connection)
-    printstyled(command; color = :green)
-    println("") # blank line
-    #println(connection)
+    #! FOR DEBUGING
+    #printstyled(command; color = :green)
+    #println("\n\n") # blank line
 end
 
 #? the main function
@@ -157,8 +158,8 @@ function main()
         (userid, userpass) = login()
         token = Auth.authenticate(userid, userpass) #* session token
         
-        if status == 1
-            printstyled("< ! AUTHENTICATION FAIL ! >\n\n"; color = :red)
+        if token == 1
+            print_error("< ! AUTHENTICATION FAIL ! >")
         else
             (connection, username, accessLvl) = Auth.connect(userid, token)
             printstyled("Welcome $username"; color = :yellow)
@@ -167,10 +168,11 @@ function main()
     end
 
     while true
-        user_input = Lib.take_input("[$username | $accessLvl]") # [Bob Dayne|Manager]
+        user_input = Lib.take_input("[$username | $accessLvl]") #* [Bob Dayne | Manager] 
 
         if user_input == "x"
-            printstyled("Goodbye~\n"; color = :light_blue)
+            printstyled("Goodbye $username...\n"; color = :light_blue)
+            println("logged out")
             break
         end
 
@@ -182,7 +184,7 @@ function main()
         sql_cmd = understand_input(user_input, accessLvl)
         
         if sql_cmd[1] == true
-            run_cmd(sql_cmd[2], "connection")
+            run_cmd(sql_cmd[2], connection)
         else
             Lib.print_error(sql_cmd[2])
         end
