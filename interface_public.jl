@@ -51,47 +51,41 @@ function help_menu()
 end
 
 #? Understand user command
-function understand_input(input)
-    words = Lib.break_input(input)
-
-    if length(words) == 0
-        return (false, "") # print nothing for blank input but accept that as error
-    end
-
-    if words[1] == "flights"
+function understand_input(userInput)
+    if userInput[1] == "flights"
         sql_cmd = "SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM Flight"
 
-        for i in 1:length(words)
-            if words[i] == "from" && i < length(words)
-                sql_cmd = Lib.generate_sql(sql_cmd, "departure", words[i + 1], 86)
-            elseif words[i] == "to" && i < length(words)
-                sql_cmd = Lib.generate_sql(sql_cmd, "destination", words[i + 1], 86)
-            elseif words[i] == "on" && i < length(words)
-                sql_cmd = Lib.generate_sql(sql_cmd, "takeOffDate", words[i + 1], 86)
-            elseif words[i] == "with" && i < length(words) && words[i + 1] == "food"
+        for i in 1:length(userInput)
+            if userInput[i] == "from"
+                sql_cmd = Lib.generate_sql(sql_cmd, "departure", userInput[i + 1], 86)
+            elseif userInput[i] == "to"
+                sql_cmd = Lib.generate_sql(sql_cmd, "destination", userInput[i + 1], 86)
+            elseif userInput[i] == "on"
+                sql_cmd = Lib.generate_sql(sql_cmd, "takeOffDate", userInput[i + 1], 86)
+            elseif userInput[i] == "with" && userInput[i + 1] == "food"
                 sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "1", 86)
-            elseif words[i] == "without" && i < length(words) && words[i + 1] == "food"
+            elseif userInput[i] == "without" && userInput[i + 1] == "food"
                 sql_cmd = Lib.generate_sql(sql_cmd, "hasFood", "0", 86)
             end
         end
 
         sql_cmd = sql_cmd * ';'
-        return (true, sql_cmd, true)
+        return sql_cmd
 
-    elseif words[1] == "planes"
+    elseif userInput[1] == "planes"
         sql_cmd = "SELECT ID, airlines, model FROM Plane"
-        if length(words) > 1
-            sql_cmd = sql_cmd * " WHERE ID='" * words[1+1] * "';"
+        if length(userInput) > 1
+            sql_cmd = sql_cmd * " WHERE ID='" * userInput[1+1] * "';"
         end
 
-        return (true, sql_cmd, false)
+        return sql_cmd
 
     else
-        return (false, "invalid input")
+        return 1
     end
 end
 
-#? Understand user command
+#? Execute the corresponding user command
 function run_cmd(command, connection, fTable)
     #! FOR DEBUGING
     #printstyled(command; color = :green)
@@ -162,24 +156,26 @@ function main()
     printstyled("\nPress [?] for Help and [X] to Quit.\n"; color = :red)
 
     while true
-        user_input = Lib.take_input('$')
-        
-        if user_input == "x"
-            printstyled("Goodbye~\n"; color = :light_blue)
-            break
-        end
+        userInput = Lib.take_input('$')
 
-        if user_input == "?"
-            help_menu()
-            continue
-        end
+        if length(userInput) > 0
+            if userInput[1] == "x"
+                printstyled("Goodbye~\n"; color = :light_blue)
+                break
+            end
 
-        sql_cmd = understand_input(user_input)
+            if userInput[1] == "?"
+                help_menu()
+                continue
+            end
 
-        if sql_cmd[1] == true
-            run_cmd(sql_cmd[2], connection, sql_cmd[3])
-        else
-            Lib.print_error(sql_cmd[2])
+            sql_cmd = understand_input(userInput)
+
+            if sql_cmd == 1
+                Lib.print_error("invalid input")
+            else
+                run_cmd(sql_cmd, connection, userInput[1]=="flights")
+            end
         end
     end
 end

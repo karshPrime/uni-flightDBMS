@@ -2,7 +2,7 @@
 
 #? module contains all methods to share to other files
 module Lib
-    export banner, break_input, generate_sql, take_input, print_error
+    export banner, generate_sql, take_input, print_error
 
     function banner(user)
         printstyled("  ___                      _    _      _ _                     \n"; color = :cyan)
@@ -12,38 +12,7 @@ module Lib
         printstyled(" \\___/| .__/ \\___|_| |_/_/   \\_|_|_|  |_|_|_| |_|\\___|___/ \n"; color = :cyan)
         printstyled("      |_|                                               $user \n"; color = :cyan)
     end
-    
-    #? break user input into words and phrases
-    #* using this over Julia's inbuilt split function to have multiworded cities like 'New York' as one element
-    function break_input(input::AbstractString)
-        in_quote = false
-        current_word = ""
-        result = []
-    
-        for char in input
-            if char == ' ' && !in_quote
-                if current_word != ""
-                    push!(result, current_word)
-                    current_word = ""
-                end
-            elseif char == '\''
-                in_quote = !in_quote
-                if current_word != ""
-                    push!(result, current_word)
-                    current_word = ""
-                end
-            else
-                current_word *= string(char)
-            end
-        end
-    
-        if current_word != ""
-            push!(result, current_word)
-        end
-    
-        return result
-    end
-    
+ 
     #? generate SQL command for passed parameters
     function generate_sql(old_cmd, field, value, cmdlen)
         if length(old_cmd) == cmdlen # length for SELECT statement without conditions
@@ -55,12 +24,38 @@ module Lib
         return new_cmd
     end
     
-    #? get user input
+    #? return user input as word array
     function take_input(identify)
         printstyled("\n$identify "; color = :blue)
-        user_input = readline()
+        userInput = lowercase(readline())
+
+        #? custom split command to have multiworded cities like 'New York' as one element
+        inQuotes = false
+        currentWord = ""
+        result = []
+
+        for char in userInput
+            if char == ' ' && !inQuotes
+                if currentWord != ""
+                    push!(result, currentWord)
+                    currentWord = ""
+                end
+            elseif char == '\''
+                inQuotes = !inQuotes
+                if currentWord != ""
+                    push!(result, currentWord)
+                    currentWord = ""
+                end
+            else
+                currentWord *= string(char)
+            end
+        end
     
-        return lowercase(user_input)
+        if currentWord != ""
+            push!(result, currentWord)
+        end
+    
+        return result
     end
     
     function print_error(prompt)
