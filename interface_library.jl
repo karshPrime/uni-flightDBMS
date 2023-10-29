@@ -10,18 +10,18 @@ module Lib
         printstyled("| | | | '_ \\ / _ | '_ \\  / _ \\ | | '__| | | '_ \\ / _ / __| \n"; color = :cyan)
         printstyled("| |_| | |_) |  __| | | |/ ___ \\| | |  | | | | | |  __\\__ \\  \n"; color = :cyan)
         printstyled(" \\___/| .__/ \\___|_| |_/_/   \\_|_|_|  |_|_|_| |_|\\___|___/ \n"; color = :cyan)
-        printstyled("      |_|                                               $user \n"; color = :cyan)
+        printstyled("      |_|                                            $user     \n"; color = :cyan)
     end
  
     #? generate SQL command for passed parameters
-    function generate_sql(old_cmd, field, value, cmdlen)
-        if length(old_cmd) == cmdlen # length for SELECT statement without conditions
-            new_cmd = old_cmd * " WHERE " * field * "=\'" * value * "'"
+    function generate_sql(oldCmd, field, value, cmdlen)
+        if length(oldCmd) == cmdlen # length for SELECT statement without conditions
+            newCmd = oldCmd * " WHERE " * field * "=\'" * value * "'"
         else
-            new_cmd = old_cmd * " AND " * field * "=\'" * value * "'"
+            newCmd = oldCmd * " AND " * field * "=\'" * value * "'"
         end
     
-        return new_cmd
+        return newCmd
     end
     
     #? return user input as word array
@@ -59,7 +59,6 @@ module Lib
     end
     
     function print_error(prompt)
-        printstyled(prompt; color = :red)
-        println("") # blank line
+        printstyled("<!> $prompt <!>\n"; color = :red)
     end
 end
