@@ -10,9 +10,9 @@ using .Lib
 #? login prompt
 function login()
     printstyled("User ID  > "; color = :green)
-    username = readline()
-    printstyled("Password > "; color = :green)
-    password = readline()
+    userid = readline()
+    printstyled("Password > "; color = :red)
+    userpass = readline()
 
     return (username, password)
 end
@@ -148,18 +148,21 @@ end
 
 #? the main function
 function main()
-    Lib.banner("Admin") # print program banner
+    Lib.banner("Admin") #* print program banner
+    
+    #* initialising variables
+    (connection, username, accessLvl) = ("", "", "")
 
-    while true # user cannot continue without successful login
-        credentials = login()
-        status = Auth.authenticate(credentials)
+    while true #! user cannot continue without successful login
+        (userid, userpass) = login()
+        token = Auth.authenticate(userid, userpass) #* session token
         
         if status == 1
             printstyled("< ! AUTHENTICATION FAIL ! >\n\n"; color = :red)
         else
-            (connection, username, accessLvl) = Auth.connect(credentials[1], status)
-            printstyled("Welcome $usernname!"; color = :yellow)
-            break # stop loop if login was successful
+            (connection, username, accessLvl) = Auth.connect(userid, token)
+            printstyled("Welcome $username"; color = :yellow)
+            break #! stop loop if login was successful
         end
     end
 
