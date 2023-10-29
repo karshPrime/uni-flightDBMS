@@ -136,7 +136,6 @@ end
 
 #? Understand user command
 function understand_input(input, user)
-    words = break_input(input)
     #
 end
 
@@ -170,23 +169,25 @@ function main()
     while true
         user_input = Lib.take_input("[$username | $accessLvl]") #* [Bob Dayne | Manager] 
 
-        if user_input == "x"
-            printstyled("Goodbye $username...\n"; color = :light_blue)
-            println("logged out")
-            break
-        end
+        if length(user_input) > 0
+            if user_input[1] == "x"
+                printstyled("Goodbye $username...\n"; color = :light_blue)
+                println("logged out")
+                break
+            end
 
-        if user_input == "?"
-            help_menu(accessLvl)
-            continue
-        end
+            if user_input[1] == "?"
+                help_menu(accessLvl, length(user_input) > 1 ? user_input[2] : " ")
+                continue
+            end
 
-        sql_cmd = understand_input(user_input, accessLvl)
-        
-        if sql_cmd[1] == true
-            run_cmd(sql_cmd[2], connection)
-        else
-            Lib.print_error(sql_cmd[2])
+            sql_cmd = understand_input(user_input, accessLvl)
+
+            if sql_cmd[1] == true
+                run_cmd(sql_cmd[2], connection)
+            else
+                Lib.print_error(sql_cmd[2])
+            end
         end
     end
 end
