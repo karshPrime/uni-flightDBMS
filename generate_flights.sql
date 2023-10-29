@@ -112,9 +112,9 @@ SET DEFAULT ROLE rPublic TO public;
 
 GRANT SELECT (ID, airlines, model, seats, capacity) ON flight_db.Plane TO rHelpdesk;
 GRANT SELECT (ID, fName, lName, age, gender) ON flight_db.Pilot TO rHelpdesk;
-GRANT SELECT (ID, pilotID, coPilotID, staffCount) ON flight_db.Crew TO rHelpdesk;
+GRANT SELECT  ON flight_db.Crew TO rHelpdesk; -- view all
 GRANT SELECT (ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rHelpdesk;
-GRANT SELECT (ID, crewID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rHelpdesk;
+GRANT SELECT ON flight_db.AirStaff TO rHelpdesk; -- view all
 GRANT rHelpdesk TO helpdesk;
 SET DEFAULT ROLE rHelpdesk TO helpdesk;
 
