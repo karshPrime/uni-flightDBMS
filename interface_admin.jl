@@ -17,6 +17,117 @@ function login()
     return (userid, userpass)
 end
 
+#? beautify help dialogue
+function syntax_help(cmd, access)
+    printstyled("Usage: "; color = :yellow)
+    print(cmd[2])
+    extra = cmd[3]
+    printstyled(" $extra \n"; color = :light_cyan)
+
+    printstyled("Description:\n"; color = :yellow)
+    for description in cmd[4]
+        println("  $description")
+    end
+
+    if length(cmd[5]) < 1; println(""); return; end
+
+    printstyled("Options:\n"; color = :yellow)
+    for (allowed, title, info) in cmd[5]
+        if allowed <= access
+            print("  $title")
+            spaceCounter = length(title)
+            while spaceCounter < 15
+                spaceCounter +=1
+                print(" ")
+            end
+            printstyled(" $info\n"; color = :light_cyan)
+        end
+    end
+    println("")
+end
+
+#? narrowed down syntax_help update for show command
+function syntax_help_show(access)
+    showDetails = (
+        0, "show", "[table] {OPTION [ARGUMENT]}", 
+        ["Displays all entries in a table based on the stated conditions."],
+        [
+            "Plane",
+            [
+                (0, "ID", "Plane ID"),
+                (0, "airlines", "Airline to which the plane belongs"),
+                (0, "model", "Plane model"),
+                (0, "seats", "Total number of seats in the plane"),
+                (0, "capacity", "Luggage capacity of the plane"),
+                (1, "makeyear", "Year the plane was launched"),
+                (1, "journeys", "Total number of journeys the plane has taken")
+            ],
+            "Pilot",
+            [
+                (0, "ID", "Pilot ID"),
+                (0, "fname", "Pilot's first name"),
+                (0, "lname", "Pilot's last name"),
+                (0, "age", "Pilot's age"),
+                (0, "gender", "Pilot's gender"),
+                (1, "nation", "Pilot's nationality"),
+                (1, "count", "Number of flights the pilot has conducted")
+            ],
+            "Crew",
+            [
+                (0, "ID", "Crew ID"),
+                (0, "pilot", "ID of the Pilot leading the crew"),
+                (0, "copilot", "ID of the Co-Pilot in the crew"),
+                (0, "count", "Total number of staff members on the flight")
+            ],
+            "Flight",
+            [
+                (0, "ID", "Flight ID"),
+                (0, "planeID", "ID of the plane for this flight"),
+                (0, "crewID", "ID of the crew assisting the flight"),
+                (0, "departure", "Departure location"),
+                (0, "destination", "Destination location"),
+                (0, "time", "Departure time"),
+                (0, "date", "Departure date"),
+                (0, "duration", "Journey duration"),
+                (1, "route", "Indicates whether it is a domestic or international flight"),
+                (1, "vip", "Indicates whether a VIP is taking this flight"),
+                (0, "food", "Indicates whether the flight serves food")
+            ],
+            "AirStaff",
+            [
+                (0, "ID", "Staff ID"),
+                (0, "crewID", "Crew to which they belong"),
+                (0, "fname", "Staff's first name"),
+                (0, "lname", "Staff's last name"),
+                (0, "age", "Staff's age"),
+                (0, "gender", "Staff's gender"),
+                (0, "language", "Staff's native language")
+            ]
+        ],
+        "Without providing an option, all entries will be displayed."
+    )
+    print_help(showDetails[1:4], access)
+
+    for i in 1:5
+        table = showDetails[5][(i*2)-1]
+        printstyled("Options for $table table:\n"; color = :yellow)
+        for (allowed, title, info) in showDetails[5][i*2]
+            if allowed <= access
+                print("  $title")
+                spaceCounter = length(title)
+                while spaceCounter < 15
+                    spaceCounter +=1
+                    print(" ")
+                end
+                printstyled(" $info\n"; color = :light_cyan)
+            end
+        end
+        println("")
+    end
+    printstyled("Note: "; color = :yellow)
+    println(showDetails[6])
+end
+
 #? print help menu showing all possible commands for the loggedin user
 function help_menu(access, option)
     #* helpdesk = 0 | associate = 1 | manager = 2 | executive = 3
@@ -75,62 +186,21 @@ function help_menu(access, option)
         ], []
     )
 
-    showDetails = (
-        0, "show", "[table] {OPTION [ARGUMENT]}", 
-        "Displays all entries in a table based on the stated conditions.",
-        "Plane",
-        [
-            (0, "ID", "Plane ID"),
-            (0, "airlines", "Airline to which the plane belongs"),
-            (0, "model", "Plane model"),
-            (0, "seats", "Total number of seats in the plane"),
-            (0, "capacity", "Luggage capacity of the plane"),
-            (1, "makeyear", "Year the plane was launched"),
-            (1, "journeys", "Total number of journeys the plane has taken")
-        ],
-        "Pilot",
-        [
-            (0, "ID", "Pilot ID"),
-            (0, "fname", "Pilot's first name"),
-            (0, "lname", "Pilot's last name"),
-            (0, "age", "Pilot's age"),
-            (0, "gender", "Pilot's gender"),
-            (1, "nation", "Pilot's nationality"),
-            (1, "count", "Number of flights the pilot has conducted")
-        ],
-        "Crew",
-        [
-            (0, "ID", "Crew ID"),
-            (0, "pilot", "ID of the Pilot leading the crew"),
-            (0, "copilot", "ID of the Co-Pilot in the crew"),
-            (0, "count", "Total number of staff members on the flight")
-        ],
-        "Flight",
-        [
-            (0, "ID", "Flight ID"),
-            (0, "planeID", "ID of the plane for this flight"),
-            (0, "crewID", "ID of the crew assisting the flight"),
-            (0, "departure", "Departure location"),
-            (0, "destination", "Destination location"),
-            (0, "takeOffTime", "Departure time"),
-            (0, "takeOffDate", "Departure date"),
-            (0, "duration", "Journey duration"),
-            (1, "route", "Indicates whether it is a domestic or international flight"),
-            (1, "hasvip", "Indicates whether a VIP is taking this flight"),
-            (0, "hasfood", "Indicates whether the flight serves food")
-        ],
-        "AirStaff",
-        [
-            (0, "ID", "Staff ID"),
-            (0, "crewID", "Crew to which they belong"),
-            (0, "fname", "Staff's first name"),
-            (0, "lname", "Staff's last name"),
-            (0, "age", "Staff's age"),
-            (0, "gender", "Staff's gender"),
-            (0, "language", "Staff's native language")
-        ],
-        "Without providing an option, all entries will be displayed."
-    )
+    #* print help for only the section user specified
+    if option == "about" 
+        syntax_help(aboutDetails, access)
+    elseif option == "add"
+        syntax_help(addDetails, access)
+    elseif option == "edit"
+        syntax_help(editDetails, access)
+    elseif option == "remove"
+        syntax_help(removeDetails, access)
+    elseif option == "count"
+        syntax_help(countDetails, access)
+    else
+        #* same as help without args
+        syntax_help(helpDetails, access)
+    end
 end
 
 
