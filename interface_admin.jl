@@ -253,10 +253,10 @@ function main()
 
             sql_cmd = understand_input(user_input, accessLvl)
 
-            if sql_cmd[1] == true
-                run_cmd(sql_cmd[2], connection)
+            if sqlCmd == 1
+                Lib.print_error("invalid input")
             else
-                Lib.print_error(sql_cmd[2])
+                run_cmd(sqlCmd, connection, userInput[1]=="flights")
             end
         end
     end
