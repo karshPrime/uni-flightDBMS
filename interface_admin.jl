@@ -181,18 +181,17 @@ module Help
         )
 
         #* print help for only the section user specified
-        if option == "about" 
-            _syntax(aboutDetails, access)
-        elseif option == "add"
-            _syntax(addDetails, access)
-        elseif option == "edit"
-            _syntax(editDetails, access)
-        elseif option == "remove"
-            _syntax(removeDetails, access)
-        elseif option == "count"
-            _syntax(countDetails, access)
-        elseif option == "show"
-            _syntax_show(access)
+        option_map = Dict(
+            "about" => aboutDetails,
+            "add" => addDetails,
+            "edit" => editDetails,
+            "remove" => removeDetails,
+            "count" => countDetails,
+            "show" => showDetails,
+        )
+
+        if haskey(option_map, option)
+            _syntax(option_map[option], access)
         else
             #* same as help without args
             _syntax(helpDetails, access)
