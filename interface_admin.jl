@@ -200,48 +200,98 @@ module Help
     end
 end
 
-#? all functions for About command
+#? all functions for About command : MySQL's DESCRIBE TABLE command
 module About
     export run
 
-    function run(command, connection)
+    function _decode(rawInput)
         #
+    end
+
+    function _print_result(data, access)
+        #
+    end
+
+    function run(userInput, accessLvl, connection)
+        sqlCmd = _decode(userInput)
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        _print_result(result, accessLvl)
     end
 end
 
-#? all functions for Add command
+#? all functions for Add command : MySQL's INSERT command
 module Add
     export run
 
-    function run(command, connection)
+    function _decode(rawInput)
         #
+    end
+
+    function _print_result(data, access)
+        #
+    end
+
+    function run(userInput, accessLvl, connection)
+        sqlCmd = _decode(userInput)
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        _print_result(result, accessLvl)
     end
 end
 
-#? all functions for Edit command
+#? all functions for Edit command : MySQL's UDPATE command
 module Edit
     export run
 
-    function run(command, connection)
+    function _decode(rawInput)
         #
+    end
+
+    function _print_result(data, access)
+        #
+    end
+
+    function run(userInput, accessLvl, connection)
+        sqlCmd = _decode(userInput)
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        _print_result(result, accessLvl)
     end
 end
 
-#? all functions for Remove command
+#? all functions for Remove command : MySQL's DELETE command
 module Remove
     export run
 
-    function run(command, connection)
+    function _decode(rawInput)
         #
+    end
+
+    function _print_result(data, access)
+        #
+    end
+
+    function run(userInput, accessLvl, connection)
+        sqlCmd = _decode(userInput)
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        _print_result(result, accessLvl)
     end
 end
 
-#? all functions for Count command
+#? all functions for Count command 
 module Count
     export run
 
-    function run(command, connection)
+    function _decode(rawInput)
         #
+    end
+
+    function _print_result(data, access)
+        #
+    end
+
+    function run(userInput, accessLvl, connection)
+        sqlCmd = _decode(userInput)
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        _print_result(result, accessLvl)
     end
 end
 
@@ -255,14 +305,18 @@ function login()
     return (userid, userpass)
 end
 
-#? break user input into SQL command
-function understand_input(rawInput)
-    #
-end
-
 #? the main function
 function main()
     Lib.banner("Admin") #* print program banner
+
+    #? define dictionary for all sql command modules
+    modules = Dict(
+        "about"  => About,
+        "add"    => Add,
+        "edit"   => Edit,
+        "remove" => Remove,
+        "count"  => Count
+    )
     
     #* initialising variables
     (connection, username, accessLvl) = ("", "", "")
@@ -295,13 +349,10 @@ function main()
                 continue
             end
 
-            sqlCmd = understand_input(userInput)
-            #printstyled(sqlCmd; color = :green) #! FOR DEBUGING
-
-            if sqlCmd == 1
-                Lib.print_error("invalid input")
+            if haskey(modules, userInput[1])
+                modules[userInput].run(userInput, accessLvl, connection)
             else
-                
+                Lib.print_error("command not found")
             end
         end
     end
