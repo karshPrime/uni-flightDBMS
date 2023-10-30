@@ -24,7 +24,7 @@ function syntax_help(cmd, access)
     extra = cmd[3]
     printstyled(" $extra \n"; color = :light_cyan)
 
-    printstyled("Description:\n"; color = :yellow)
+    printstyled("\nDescription:\n"; color = :yellow)
     for description in cmd[4]
         println("  $description")
     end
@@ -197,6 +197,8 @@ function help_menu(access, option)
         syntax_help(removeDetails, access)
     elseif option == "count"
         syntax_help(countDetails, access)
+    elseif option == "show"
+        syntax_help_show(access)
     else
         #* same as help without args
         syntax_help(helpDetails, access)
