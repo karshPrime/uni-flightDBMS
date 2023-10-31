@@ -291,6 +291,13 @@ module Count
         sqlCmd = _decode(userInput)
         result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
         _print_result(result, accessLvl)
+function executive_switch(motetoflight)
+    if motetoflight
+        DBInterface.execute(wire, "SET ROLE rManager;");
+        DBInterface.execute(wire, "USE flight_db;");
+    else
+        DBInterface.execute(wire, "SET ROLE rExecutive;");
+        DBInterface.execute(wire, "USE control_db;");
     end
 end
 
