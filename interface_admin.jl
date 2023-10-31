@@ -141,12 +141,16 @@ module Help
             ]
         )
 
-        aboutDetails = (
-            0, "about", "{TABLE NAME} {cmd}", 
+        tableDetails = (
+            0, "table", "(about|count) {TABLE NAME}", 
             [
-                "Lists all information about the specified table.", 
-                "If no table is specified, it lists information for all tables."
-            ], []
+                "Displays information about either all tables or a specific table.",
+                "With no argument it lists all tables in the database."
+            ],
+            [
+                (0, "about", "Get general description of a table"),
+                (0, "count", "Get a count of number of entries in a table")
+            ]
         )
 
         addDetails = (
@@ -173,7 +177,7 @@ module Help
         )
 
         countDetails = (
-            0, "count", "{table}", 
+            0, "count", "{TABLE}", 
             [
                 "Lists the number of entries in the specified table.",
                 "If no table is specified, it lists the number of entries in each table."
@@ -182,7 +186,7 @@ module Help
 
         #* print help for only the section user specified
         option_map = Dict(
-            "about" => aboutDetails,
+            "table" => tableDetails,
             "add" => addDetails,
             "edit" => editDetails,
             "remove" => removeDetails,
@@ -199,22 +203,130 @@ module Help
     end
 end
 
-#? all functions for About command : MySQL's DESCRIBE TABLE command
-module About
+#? all functions for Table command : MySQL's DESCRIBE TABLE command + count
+module Table
     export run
 
-    function _decode(rawInput)
-        #
+    _flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
+    _controlTables = ["Access","Authentication","Logs","Profil"]
+
+    function _decode(rawInput, accessLvl)
+        cmds = []
+        
+        if length(rawInput) == 1
+            printstyled("All Flight Tables:\n"; color = :yellow)
+            for table in _flightTables
+                printstyled("  $table\n"; color = :light_cyan)
+            end
+
+            if accessLvl == 3 #* also show control tables if exec
+                printstyled("All Control Tables:\n"; color = :yellow)
+                for table in _controlTables
+                    printstyled("  $table\n"; color = :light_cyan)
+                end
+            end
+
+            cmds = [0]
+        else
+            if length(rawInput) > 1
+                for (index, element) in enumerate(_flightTables)
+                    if rawInput[2] == lowercase(element)
+                        return [index]
+                    end
+                end
+
+                for (index, element) in enumerate(_controlTables)
+                    if rawInput[2] == lowercase(element)
+                        return [index+length(_flightTables)]
+                    end
+                end
+
+                Lib.print_error("invalid table")
+                lib.print_error("""just type "table" to get a list of all tables""")
+                return [0]
+            else
+                cmds = [1,2,3,4,5,6,7,8,9]
+            end
+        end
+
+        return cmds
     end
 
-    function _print_result(data, access)
-        #
+    function _print_result_about(data)
+        Lib.draw_border([27,5,9,12])
+        Lib.table_head(["Field","Null","Key","Default"],[24,4,6,9])
+        Lib.draw_border([27,5,9,12])
+        for row in data
+            field = row[:Field]
+            null = coalesce(row[:Null], "Missing") == "NO" ?  " x " : " ✔ "
+
+            default = coalesce(row[:Default], "missing")
+            default = default == "missing" ? "null" : join(Char.(default))
+
+            key = if row[:Key] == "PRI"
+                "Primary"
+            elseif row[:Key] == "MUL"
+                "Foreign"
+            else
+                 "   -"
+            end
+        
+            formatted_row = @sprintf("| %-25s | %-3s | %-7s | %-10s |", 
+                field, 
+                null, 
+                key, 
+                default
+            )
+        
+            printstyled(formatted_row, color = :light_cyan)
+            println("")  # New line after each row
+        end
+        Lib.draw_border([27,5,9,12])
+    end
+
+    function _print_result_count(data)
+        for row in data
+            printstyled("Count of Crew: "; color = :yellow)
+            count = row[1]
+            printstyled("$count\n\n"; color = :light_cyan)
+        end
+    end
+
+    function _table_title(i)
+        if i > 5
+            executive_flight(false)
+            return _controlTables[cmd]
+        end
+        
+        executive_flight(true)
+        return _flightTables[cmd]
     end
 
     function run(userInput, accessLvl, connection)
-        sqlCmd = _decode(userInput)
-        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
-        _print_result(result, accessLvl)
+        sqlCmds = _decode(userInput, accessLvl)
+
+        if sqlCmds[1] == 0 return; end;
+
+        if userInput[2] == "count"
+            for cmd in sqlCmds
+                fullCmd = "SELECT COUNT(*) FROM " * _table_title(cmd)
+                result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
+                _print_result_count(result)
+            end
+
+        elseif userInput[2] == "about"
+            cmdHead = "DESCRIBE "
+            for cmd in sqlCmds
+                fullCmd = "DESCRIBE " * _table_title(cmd)
+                result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
+            
+                _print_result_about(result)
+            end
+        else
+            Lib.print_error("invalid parameters")
+            Lib.print_error("""type "? table" for more information.""")
+            return
+        end
     end
 end
 
@@ -222,6 +334,14 @@ end
 module Add
     export run
 
+    function _attributes(accessLvl)
+        @switch accessLvl begin
+            0 => return [""]
+            1 => return [""]
+            2 => return [""]
+        end
+    end
+    
     function _decode(rawInput)
         #
     end
@@ -241,6 +361,14 @@ end
 module Edit
     export run
 
+    function _attributes(accessLvl)
+        @switch accessLvl begin
+            0 => return [""]
+            1 => return [""]
+            2 => return [""]
+        end
+    end
+    
     function _decode(rawInput)
         #
     end
@@ -260,6 +388,14 @@ end
 module Remove
     export run
 
+    function _attributes(accessLvl)
+        @switch accessLvl begin
+            0 => return [""]
+            1 => return [""]
+            2 => return [""]
+        end
+    end
+    
     function _decode(rawInput)
         #
     end
@@ -275,23 +411,7 @@ module Remove
     end
 end
 
-#? all functions for Count command 
-module Count
-    export run
-
-    function _decode(rawInput)
-        #
-    end
-
-    function _print_result(data, access)
-        #
-    end
-
-    function run(userInput, accessLvl, connection)
-        sqlCmd = _decode(userInput)
-        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
-        _print_result(result, accessLvl)
-function executive_switch(motetoflight)
+function executive_flight(motetoflight)
     if motetoflight
         DBInterface.execute(wire, "SET ROLE rManager;");
         DBInterface.execute(wire, "USE flight_db;");
