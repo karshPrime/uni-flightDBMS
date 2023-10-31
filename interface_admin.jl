@@ -153,7 +153,7 @@ module Help
             1, "add", "[table]", 
             [
                 "Prompts to add an entry to the specified table."
-            ], []
+            ]
         )
 
         editDetails = (
@@ -161,7 +161,7 @@ module Help
             [
                 "Edits the table with the specified changes for entries that match the condition.",
                 "Use FORCE to skip confirmation."
-            ], []
+            ]
         )
 
         removeDetails = (
@@ -169,7 +169,7 @@ module Help
             [
                 "Deletes either all entries in the specified table or entries that match the specified conditions.",
                 "Use FORCE to skip confirmation."
-            ], []
+            ]
         )
 
         countDetails = (
@@ -177,7 +177,7 @@ module Help
             [
                 "Lists the number of entries in the specified table.",
                 "If no table is specified, it lists the number of entries in each table."
-            ], []
+            ]
         )
 
         #* print help for only the section user specified
@@ -316,7 +316,7 @@ function main()
         "remove" => Remove,
         "count"  => Count
     )
-    
+
     #* initialising variables
     (connection, username, accessLvl) = ("", "", "")
 
