@@ -349,25 +349,31 @@ end
 module Add
     export run
 
-    function _attributes(accessLvl)
-        @switch accessLvl begin
-            0 => return [""]
-            1 => return [""]
-            2 => return [""]
-        end
-    end
-    
-    function _decode(rawInput)
-        #
-    end
-
     function _print_result(data, access)
-        #
+        #TODO error handling
     end
 
     function run(userInput, accessLvl, connection)
-        sqlCmd = _decode(userInput)
-        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+        table = Scrape.entered_table(userInput, "add", "to")
+        if table == 1 return 1; end
+
+        attributes = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
+        
+        data = Dict{String, String}()
+        
+        for column in attributes
+            column_name = column[:Field]
+            print("> $column_name : ")
+            value = chomp(readline())
+            data[column_name] = value
+        end
+        
+        columns = join(keys(data), ", ")
+        values = join(values(data), ", ")
+        
+        sqlCmd = """INSERT INTO $table_name ($columns) VALUES ("$values");"""
+        DBInterface.execute(connection, sqlCmd)
+
         _print_result(result, accessLvl)
     end
 end
