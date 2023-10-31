@@ -94,27 +94,18 @@ function run_cmd(command, connection, fTable)
     result = DBInterface.fetch(DBInterface.execute(connection, command))
     
     if fTable == true
-        heading = "| Departure       | Destination     | Take Off | Date       | Duration | Food  |"
-        printstyled(heading; color = :yellow)
-        println("") # blank line
-
-        border = "|-----------------|-----------------|----------|------------|----------|-------|"
-        printstyled(border; color = :yellow)
-        println("") # blank line
+        Lib.draw_border([17,17,10,12,10,7])
+        Lib.table_head(["Departure","Destination","Take Off","Date","Duration","Food"],[14,14,7,9,7,4])
+        Lib.draw_border([17,17,10,12,10,7])
 
         for row in result
-            # fetch values from each row
             departure = row[:departure]
             destination = row[:destination]
             takeOffTime = row[:takeOffTime]
             takeOffDate = row[:takeOffDate]
             duration = row[:duration]
-
-            # based on your MySQL schema, the "hasFood" might be a numeral field.
-            # In such case, convert it into a Boolean value here
             hasFood = row[:hasFood] == 1 ? true : false
 
-            # print each row in the desired format
             formatted_row = @sprintf("| %-15s | %-15s | %-8s | %-10s | %-8s | %-5s |", 
                 departure, 
                 destination, 
@@ -127,14 +118,11 @@ function run_cmd(command, connection, fTable)
             printstyled(formatted_row, color = :light_cyan)
             println("")  # New line after each row
         end
+        Lib.draw_border([17,17,10,12,10,7])
     else
-        heading = "| ID    | Airlines             | Model                   |"
-        printstyled(heading; color = :yellow)
-        println("")
-
-        border = "|-------|----------------------|-------------------------|"
-        printstyled(border; color = :yellow)
-        println("")
+        Lib.draw_border([7,22,25])
+        Lib.table_head(["ID","Airlines","Model"],[4,19,22])
+        Lib.draw_border([7,22,25])
 
         for row in result
             planeid = row[:ID]
@@ -145,6 +133,7 @@ function run_cmd(command, connection, fTable)
             printstyled(formatted_row, color = :light_cyan)
             println("")
         end
+        Lib.draw_border([7,22,25])
     end
 end
 

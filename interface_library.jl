@@ -2,7 +2,7 @@
 
 #? module contains all methods to share to other files
 module Lib
-    export banner, generate_sql, take_input, print_error
+    export banner, generate_sql, take_input, print_error, border
 
     function banner(user)
         printstyled("  ___                      _    _      _ _                     \n"; color = :cyan)
@@ -22,6 +22,32 @@ module Lib
         end
     
         return newCmd
+    end
+
+    #? draw border line for tables
+    function draw_border(sections)
+        borderString = "+"
+        for i in 1:length(sections)
+            for j in 1:sections[i]
+                borderString *= "-"
+            end
+            borderString *= "|"
+        end
+        borderString = borderString[1:end-1] * "+"
+        printstyled("$borderString\n"; color = :yellow)
+    end
+
+    #? print table heading
+    function table_head(titles, spaces)
+        headString = "| "
+        for i in 1:length(titles)
+            headString *= titles[i]
+            for j in length(titles[i]):spaces[i]
+                headString *= " "
+            end
+            headString *= " | "
+        end
+        printstyled("$headString\n"; color = :yellow)
     end
     
     #? return user input as word array
