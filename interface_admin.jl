@@ -382,26 +382,39 @@ end
 module Edit
     export run
 
-    function _attributes(accessLvl)
-        @switch accessLvl begin
-            0 => return [""]
-            1 => return [""]
-            2 => return [""]
-        end
-    end
-    
-    function _decode(rawInput)
-        #
-    end
-
     function _print_result(data, access)
-        #
+        #TODO error handle prompt
     end
 
     function run(userInput, accessLvl, connection)
-        sqlCmd = _decode(userInput)
-        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
-        _print_result(result, accessLvl)
+        table = Scrape.entered_table(userInput, "modify", "in")
+        if table == 1 return 1; end
+
+        tableInfo = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
+
+        # Get the primary key
+        primaryKey = ""
+        for row in tableInfo
+            if row[:Key] == "PRI"
+                primaryKey = row[:Field]
+                break
+            end
+        end
+
+        # Prompt for the entry ID to modify
+        println("Enter $primaryKey for entry you wish to modify: ")
+        id = readline()
+
+        # Prompt for changes
+        for row in tableInfo
+            println("> ${row[:Field]}: ")
+            newData = chomp(readline())
+            sqlCmd = "UPDATE $table SET ${row[:Field]} = '$newData' WHERE $primaryKey = $id;"
+            
+            actionLog = DBInterface.execute(connection, sqlCmd)
+
+            _print_result(result, accessLvl)
+        end
     end
 end
 
