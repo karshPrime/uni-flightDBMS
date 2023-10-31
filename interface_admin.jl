@@ -7,6 +7,45 @@ using .Auth
 include("interface_library.jl") # functions with "Lib." prefix
 using .Lib
 
+module Scrape
+    export Scrape.flightTables, Scrape.controlTables, check_table, input_check
+
+    Scrape.flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
+    Scrape.controlTables = ["Access","Authentication","Logs","Profil"]
+
+    function check_table(title)
+        for element in enumerate(Scrape.flightTables)
+            if title == lowercase(element)
+                return [element]
+            end
+        end
+
+        for element in enumerate(Scrape.controlTables)
+            if title == lowercase(element)
+                return [element]
+            end
+        end
+        
+        Lib.print_error("table not found")
+        Lib.print_error("""type "table" to get a list of all tables""")
+        return 1 # no result
+    end
+
+    function entered_table(userInput, action, prepositions)
+        if length(userInput) == 1
+            Lib.print_error("Please specify table to $action data $prepositions.")
+            Lib.print_error("""type "? add" for more information.""")
+            return 1;
+        end
+        
+        return check_table(userInput[1])
+    end
+
+    function primary_key(table, connection)
+        #
+    end
+end
+
 #? all functions for Help command
 module Help
     export run
@@ -207,21 +246,18 @@ end
 module Table
     export run
 
-    _flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
-    _controlTables = ["Access","Authentication","Logs","Profil"]
-
     function _decode(rawInput, accessLvl)
         cmds = []
         
         if length(rawInput) == 1
             printstyled("All Flight Tables:\n"; color = :yellow)
-            for table in _flightTables
+            for table in Scrape.flightTables
                 printstyled("  $table\n"; color = :light_cyan)
             end
 
             if accessLvl == 3 #* also show control tables if exec
                 printstyled("All Control Tables:\n"; color = :yellow)
-                for table in _controlTables
+                for table in Scrape.controlTables
                     printstyled("  $table\n"; color = :light_cyan)
                 end
             end
@@ -229,23 +265,13 @@ module Table
             cmds = [0]
         else
             if length(rawInput) > 1
-                for (index, element) in enumerate(_flightTables)
-                    if rawInput[2] == lowercase(element)
-                        return [index]
-                    end
-                end
-
-                for (index, element) in enumerate(_controlTables)
-                    if rawInput[2] == lowercase(element)
-                        return [index+length(_flightTables)]
-                    end
-                end
-
-                Lib.print_error("invalid table")
-                lib.print_error("""just type "table" to get a list of all tables""")
-                return [0]
+                table_name = Scrape.check_table(rawInput[2])
+                cmds = [table_name]
             else
-                cmds = [1,2,3,4,5,6,7,8,9]
+                cmds = Scrape.flightTables
+                if accessLvl == 3
+                    cmds = vcat(Scrape.controlTables, Scrape.flightTables)
+                end
             end
         end
 
@@ -292,34 +318,23 @@ module Table
         end
     end
 
-    function _table_title(i)
-        if i > 5
-            executive_flight(false)
-            return _controlTables[cmd]
-        end
-        
-        executive_flight(true)
-        return _flightTables[cmd]
-    end
-
     function run(userInput, accessLvl, connection)
-        sqlCmds = _decode(userInput, accessLvl)
+        tableTitles = _decode(userInput, accessLvl)
 
-        if sqlCmds[1] == 0 return; end;
+        if tableTitles[1] == 0 return; end;
 
         if userInput[2] == "count"
-            for cmd in sqlCmds
-                fullCmd = "SELECT COUNT(*) FROM " * _table_title(cmd)
+            for title in tableTitles
+                fullCmd = "SELECT COUNT(*) FROM " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
                 _print_result_count(result)
             end
 
         elseif userInput[2] == "about"
             cmdHead = "DESCRIBE "
-            for cmd in sqlCmds
-                fullCmd = "DESCRIBE " * _table_title(cmd)
+            for title in tableTitles
+                fullCmd = "DESCRIBE " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
-            
                 _print_result_about(result)
             end
         else
