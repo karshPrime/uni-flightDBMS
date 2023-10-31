@@ -42,7 +42,17 @@ module Scrape
     end
 
     function primary_key(table, connection)
-        #
+        tableInfo = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
+
+        primaryKey = ""
+        for row in tableInfo
+            if row[:Key] == "PRI"
+                primaryKey = row[:Field]
+                break
+            end
+        end
+
+        return (tableInfo, primaryKey)
     end
 end
 
@@ -390,20 +400,11 @@ module Edit
         table = Scrape.entered_table(userInput, "modify", "in")
         if table == 1 return 1; end
 
-        tableInfo = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
-
-        # Get the primary key
-        primaryKey = ""
-        for row in tableInfo
-            if row[:Key] == "PRI"
-                primaryKey = row[:Field]
-                break
-            end
-        end
+        (tableInfo, primaryKey) = Scrape.primary_key(table, connection)
 
         # Prompt for the entry ID to modify
         println("Enter $primaryKey for entry you wish to modify: ")
-        id = readline()
+        id = chomp(readline())
 
         # Prompt for changes
         for row in tableInfo
