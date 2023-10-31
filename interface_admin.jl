@@ -496,6 +496,7 @@ function main()
 
         if length(userInput) > 0 #* ignore blank input
             if userInput[1] == "x" #* quit
+                DBInterface.close!
                 printstyled("Goodbye $username...\n"; color = :light_blue)
                 println("logged out")
                 break
