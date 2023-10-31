@@ -68,7 +68,6 @@ GRANT ALL ON control_db.Profile TO rExecutive;
 GRANT ALL ON control_db.Access TO rExecutive;
 GRANT ALL ON control_db.Authentication TO rExecutive;
 GRANT rExecutive TO executive;
-SET DEFAULT ROLE rExecutive TO executive;
 
 -- system has only read certain data- data that is required for the program to operate.
 GRANT SELECT ON control_db.Authentication TO rApp;

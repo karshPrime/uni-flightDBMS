@@ -134,6 +134,7 @@ SET DEFAULT ROLE rAssociate TO associate;
 GRANT ALL ON flight_db.* TO rManager;
 GRANT rManager TO manager;
 SET DEFAULT ROLE rManager TO manager;
+SET DEFAULT ROLE rManager TO executive; -- exec has same perms manager on this db
 
 GRANT rManager TO executive;
 
