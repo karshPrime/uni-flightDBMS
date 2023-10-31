@@ -423,26 +423,22 @@ end
 module Remove
     export run
 
-    function _attributes(accessLvl)
-        @switch accessLvl begin
-            0 => return [""]
-            1 => return [""]
-            2 => return [""]
-        end
-    end
-    
-    function _decode(rawInput)
-        #
-    end
-
     function _print_result(data, access)
-        #
+        #TODO error handle prompt
     end
 
     function run(userInput, accessLvl, connection)
-        sqlCmd = _decode(userInput)
-        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
-        _print_result(result, accessLvl)
+        table = Scrape.entered_table(userInput, "remove", "from")
+        if table == 1 return 1; end
+        
+        (~, primaryKey) = Scrape.primary_key(table, connection)
+        println("Enter $primaryKey for entry you wish to delete: ")
+        id = chomp(readline())
+        sqlCmd = "DELETE FROM $tableName WHERE $primaryKey = $id;"
+
+        action = DBInterface.execute(connection, sqlCmd)
+
+        _print_result(action, accessLvl)
     end
 end
 
