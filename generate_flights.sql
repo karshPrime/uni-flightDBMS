@@ -104,22 +104,35 @@ DELIMITER ;
 -- );
 
 --!-----------------------------------------------------!-- Roles & Permissions --!---!--
-
+--* Public permissions
 GRANT SELECT (ID, airlines, model) ON flight_db.Plane TO rPublic;
 GRANT SELECT (departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rPublic;
+
+CREATE VIEW PPlane AS SELECT ID, airlines, model FROM flight_db.Plane;
+CREATE VIEW PFlight AS SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM flight_db.Flight;
+
 GRANT rPublic TO public;
 SET DEFAULT ROLE rPublic TO public;
 
+
+--* Helpdesk permissions
 GRANT SELECT (ID, airlines, model, seats, capacity) ON flight_db.Plane TO rHelpdesk;
 GRANT SELECT (ID, fName, lName, age, gender) ON flight_db.Pilot TO rHelpdesk;
-GRANT SELECT  ON flight_db.Crew TO rHelpdesk; -- view all
+GRANT SELECT ON flight_db.Crew TO rHelpdesk; 
 GRANT SELECT (ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rHelpdesk;
-GRANT SELECT ON flight_db.AirStaff TO rHelpdesk; -- view all
+GRANT SELECT ON flight_db.AirStaff TO rHelpdesk; 
+
+CREATE VIEW HPlane AS SELECT ID, airlines, model, seats, capacity FROM flight_db.Plane;
+CREATE VIEW HPilot AS SELECT ID, fName, lName, age, gender FROM flight_db.Pilot;
+CREATE VIEW HFlight AS SELECT ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM flight_db.Flight;
+
 GRANT rHelpdesk TO helpdesk;
 SET DEFAULT ROLE rHelpdesk TO helpdesk;
 
-GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; -- view all
-GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; -- view all
+
+--* Associate permissions
+GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; 
+GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; 
 GRANT SELECT (ID, staffCount) ON flight_db.Crew TO rAssociate;
 GRANT SELECT, UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
 GRANT SELECT (ID, hasVIP) ON flight_db.Flight TO rAssociate;
@@ -127,15 +140,22 @@ GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, take
 GRANT INSERT ON flight_db.Flight TO rAssociate;
 GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rAssociate;
 GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
+
+CREATE VIEW ACrew AS SELECT ID, staffCount, pilotID, coPilotID FROM flight_db.Crew;
+CREATE VIEW AFlight AS SELECT ID, hasVIP, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood FROM flight_db.Flight;
+CREATE VIEW AAirStaff AS SELECT ID, fName, lName, age, gender, nativeLanguage, crewID FROM flight_db.AirStaff;
+
 GRANT rAssociate TO associate;
 SET DEFAULT ROLE rAssociate TO associate;
 
--- manager has SELECT, UPDATE, and INSERT all tables
+
+--* Manager and Executive permissions
+-- have SELECT, UPDATE, and INSERT on all tables
 GRANT ALL ON flight_db.* TO rManager;
 GRANT rManager TO manager;
-SET DEFAULT ROLE rManager TO manager;
-SET DEFAULT ROLE rManager TO executive; -- exec has same perms manager on this db
 
+SET DEFAULT ROLE rManager TO manager;
 GRANT rManager TO executive;
+SET DEFAULT ROLE rManager TO executive; -- exec has same perms manager on this db
 
 FLUSH PRIVILEGES;
