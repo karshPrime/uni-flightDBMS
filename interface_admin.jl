@@ -8,7 +8,7 @@ include("interface_library.jl") # functions with "Lib." prefix
 using .Lib
 
 module Scrape
-    export view, get_all_view, primary_key
+    export table, view, all_views, enter_a_table, primary_key
 
     tableNames = Dict(
         "plane"    => "Plane",
