@@ -14,8 +14,8 @@ module Lib
     end
  
     #? generate SQL command for passed parameters
-    function generate_sql(oldCmd, field, value, cmdlen)
-        if length(oldCmd) == cmdlen # length for SELECT statement without conditions
+    function generate_sql(oldCmd, field, value)
+        if length(oldCmd) == 0
             newCmd = oldCmd * " WHERE " * field * "=\'" * value * "'"
         else
             newCmd = oldCmd * " AND " * field * "=\'" * value * "'"
