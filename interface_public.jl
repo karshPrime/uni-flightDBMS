@@ -53,27 +53,27 @@ end
 #? Understand user command
 function understand_input(userInput)
     if userInput[1] == "flights"
-        sqlCmd = "SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM Flight"
+        conditions = ""
 
         for i in 1:length(userInput)
             if userInput[i] == "from"
-                sqlCmd = Lib.generate_sql(sqlCmd, "departure", userInput[i + 1], 86)
+                conditions = Lib.generate_sql(conditions, "departure", userInput[i + 1])
             elseif userInput[i] == "to"
-                sqlCmd = Lib.generate_sql(sqlCmd, "destination", userInput[i + 1], 86)
+                conditions = Lib.generate_sql(conditions, "destination", userInput[i + 1])
             elseif userInput[i] == "on"
-                sqlCmd = Lib.generate_sql(sqlCmd, "takeOffDate", userInput[i + 1], 86)
+                conditions = Lib.generate_sql(conditions, "takeOffDate", userInput[i + 1])
             elseif userInput[i] == "with" && userInput[i + 1] == "food"
-                sqlCmd = Lib.generate_sql(sqlCmd, "hasFood", "1", 86)
+                conditions = Lib.generate_sql(conditions, "hasFood", "1")
             elseif userInput[i] == "without" && userInput[i + 1] == "food"
-                sqlCmd = Lib.generate_sql(sqlCmd, "hasFood", "0", 86)
+                conditions = Lib.generate_sql(conditions, "hasFood", "0")
             end
         end
 
-        sqlCmd = sqlCmd * ';'
+        sqlCmd = "SELECT * FROM PFlight" * conditions *';'
         return sqlCmd
 
     elseif userInput[1] == "planes"
-        sqlCmd = "SELECT ID, airlines, model FROM Plane"
+        sqlCmd = "SELECT * FROM PPlane"
         if length(userInput) > 1
             sqlCmd = sqlCmd * " WHERE ID='" * userInput[1+1] * "';"
         end

@@ -105,45 +105,45 @@ DELIMITER ;
 
 --!-----------------------------------------------------!-- Roles & Permissions --!---!--
 --* Public permissions
-GRANT SELECT (ID, airlines, model) ON flight_db.Plane TO rPublic;
-GRANT SELECT (departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rPublic;
-
 CREATE VIEW PPlane AS SELECT ID, airlines, model FROM flight_db.Plane;
 CREATE VIEW PFlight AS SELECT departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM flight_db.Flight;
+
+GRANT SELECT ON PPlane TO rPublic;
+GRANT SELECT ON PFlight TO rPublic;
 
 GRANT rPublic TO public;
 SET DEFAULT ROLE rPublic TO public;
 
 
 --* Helpdesk permissions
-GRANT SELECT (ID, airlines, model, seats, capacity) ON flight_db.Plane TO rHelpdesk;
-GRANT SELECT (ID, fName, lName, age, gender) ON flight_db.Pilot TO rHelpdesk;
-GRANT SELECT ON flight_db.Crew TO rHelpdesk; 
-GRANT SELECT (ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood) ON flight_db.Flight TO rHelpdesk;
-GRANT SELECT ON flight_db.AirStaff TO rHelpdesk; 
-
 CREATE VIEW HPlane AS SELECT ID, airlines, model, seats, capacity FROM flight_db.Plane;
 CREATE VIEW HPilot AS SELECT ID, fName, lName, age, gender FROM flight_db.Pilot;
 CREATE VIEW HFlight AS SELECT ID, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, hasFood FROM flight_db.Flight;
+
+GRANT SELECT ON HPlane TO rHelpdesk;
+GRANT SELECT ON HPilot TO rHelpdesk;
+GRANT SELECT ON HFlight TO rHelpdesk;
+GRANT SELECT ON flight_db.Crew TO rHelpdesk; 
+GRANT SELECT ON flight_db.AirStaff TO rHelpdesk; 
 
 GRANT rHelpdesk TO helpdesk;
 SET DEFAULT ROLE rHelpdesk TO helpdesk;
 
 
 --* Associate permissions
-GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; 
-GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; 
-GRANT SELECT (ID, staffCount) ON flight_db.Crew TO rAssociate;
-GRANT SELECT, UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
-GRANT SELECT (ID, hasVIP) ON flight_db.Flight TO rAssociate;
-GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
-GRANT INSERT ON flight_db.Flight TO rAssociate;
-GRANT SELECT (ID, fName, lName, age, gender, nativeLanguage) ON flight_db.AirStaff TO rAssociate;
-GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
-
 CREATE VIEW ACrew AS SELECT ID, staffCount, pilotID, coPilotID FROM flight_db.Crew;
 CREATE VIEW AFlight AS SELECT ID, hasVIP, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood FROM flight_db.Flight;
 CREATE VIEW AAirStaff AS SELECT ID, fName, lName, age, gender, nativeLanguage, crewID FROM flight_db.AirStaff;
+
+GRANT UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
+GRANT UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
+GRANT INSERT ON flight_db.Flight TO rAssociate;
+GRANT UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
+GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; 
+GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; 
+GRANT SELECT ON ACrew TO rAssociate;
+GRANT SELECT ON AFlight TO rAssociate;
+GRANT SELECT ON AAirStaff TO rAssociate;
 
 GRANT rAssociate TO associate;
 SET DEFAULT ROLE rAssociate TO associate;
