@@ -10,7 +10,7 @@ using .Lib
 module Scrape
     export view, get_all_view, primary_key
 
-    defaultNames = Dict(
+    tableNames = Dict(
         "plane"    => "Plane",
         "pilot"    => "Pilot",
         "crew"     => "Crew",
@@ -18,20 +18,20 @@ module Scrape
         "airstaff" => "AirStaff"
     )
 
-    helpdesk = Dict(
+    helpdeskView = Dict(
         "plane"    => "HPlane",
         "pilot"    => "HPilot",
         "flight"   => "HFlight"
     )
 
-    associate = Dict(
+    associateView = Dict(
         "crew"     => "ACrew",
         "flight"   => "AFlight",
         "airstaff" => "AAirStaff",
 
     )
 
-    executive = Dict(
+    executiveView = Dict(
         "crew"     => "Plane",
         "flight"   => "Pilot",
         "airstaff" => "Crew",
@@ -44,17 +44,27 @@ module Scrape
     )
 
     users = Dict(
-        0 => helpdesk,
-        1 => associate,
-        2 => defaultNames, # since manager has access to all
+        0 => helpdeskView,
+        1 => associateView,
+        2 => tableNames, # since manager has access to all
         3 => executive,
     )
 
-    function view(tableName, accessLvl) 
-        if haskey(users[accessLvl], tableName)
-            return users[accessLvl][tableName]
-        elseif haskey(defaultNames, tableName)
-            return defaultNames[tableName]
+    function table(title)
+        if haskey(tableNames, title)
+            return tableNames[title]
+        end
+
+        Lib.print_error("table not found")
+        Lib.print_error("""type "table" to get a list of all tables""")
+        return 1
+    end
+
+    function view(tableTitle, accessLvl) 
+        if haskey(users[accessLvl], tableTitle)
+            return users[accessLvl][tableTitle]
+        elseif haskey(tableNames, tableTitle)
+            return tableNames[tableTitle]
         end
 
         Lib.print_error("table not found")
@@ -63,27 +73,33 @@ module Scrape
     end
 
     function all_views(accessLvl)
-        allTables = []
+        allViews = []
 
-        for key in keys(defaultNames)
+        for key in keys(tableNames)
             if haskey(users[accessLvl], key)
-                push!(allTables, users[accessLvl][key])
+                push!(allViews, users[accessLvl][key])
             else
-                push!(allTables, defaultNames[key])
+                push!(allViews, tableNames[key])
             end
         end
 
-        return allTables
+        if accessLvl == 3
+            for key in keys(executiveView)
+                push!(allViews, executiveView[key])
+            end
+        end
+
+        return allViews
     end
 
-    function enter_a_table(userInput, action, prepositions, accessLvl, accessLvl)
+    function enter_a_table(userInput, action, prepositions)
         if length(userInput) == 1
             Lib.print_error("Please specify table to $action data $prepositions.")
             Lib.print_error("""type "? add" for more information""")
             return 1;
         end
         
-        return view(userInput[1], accessLvl)
+        return table(userInput[1])
     end
 
     function primary_key(table, connection)
@@ -302,12 +318,11 @@ module Table
     export run
 
     function _decode(rawInput, accessLvl)
+        flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
+        controlTables = ["Access","Authentication","Logs","Profil"]
         cmds = []
         
         if length(rawInput) == 1
-            flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
-            controlTables = ["Access","Authentication","Logs","Profil"]
-
             printstyled("All Flight Tables:\n"; color = :yellow)
             for table in flightTables
                 printstyled("  $table\n"; color = :light_cyan)
@@ -323,10 +338,12 @@ module Table
             cmds = [1]
         else
             if length(rawInput) > 1
-                table_name = Scrape.view(rawInput[2], accessLvl)
-                cmds = [table_name]
+                tableName = Scrape.table(rawInput[2])
+                cmds = [tableName]
+            elseif accessLvl == 3
+                cmds = vcat(flightTables, controlTables)
             else
-                cmds = Scrape.all_views(accessLvl)
+                cmds = flightTables
             end
         end
 
