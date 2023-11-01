@@ -8,37 +8,82 @@ include("interface_library.jl") # functions with "Lib." prefix
 using .Lib
 
 module Scrape
-    export Scrape.flightTables, Scrape.controlTables, check_table, input_check
+    export view, get_all_view, primary_key
 
-    Scrape.flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
-    Scrape.controlTables = ["Access","Authentication","Logs","Profil"]
+    defaultNames = Dict(
+        "plane"    => "Plane",
+        "pilot"    => "Pilot",
+        "crew"     => "Crew",
+        "flight"   => "Flight",
+        "airstaff" => "AirStaff"
+    )
 
-    function check_table(title)
-        for element in enumerate(Scrape.flightTables)
-            if title == lowercase(element)
-                return [element]
-            end
+    helpdesk = Dict(
+        "plane"    => "HPlane",
+        "pilot"    => "HPilot",
+        "flight"   => "HFlight"
+    )
+
+    associate = Dict(
+        "crew"     => "ACrew",
+        "flight"   => "AFlight",
+        "airstaff" => "AAirStaff",
+
+    )
+
+    executive = Dict(
+        "crew"     => "Plane",
+        "flight"   => "Pilot",
+        "airstaff" => "Crew",
+        "plane"    => "Flight",
+        "pilot"    => "AirStaff",
+        "logs"     => "Logs"
+        "profile"  => "Profile"
+        "access"   => "Access"
+        "auth"     => "Authentication"
+    )
+
+    users = Dict(
+        0 => helpdesk,
+        1 => associate,
+        2 => defaultNames, # since manager has access to all
+        3 => executive,
+    )
+
+    function view(tableName, accessLvl) 
+        if haskey(users[accessLvl], tableName)
+            return users[accessLvl][tableName]
+        elseif haskey(defaultNames, tableName)
+            return defaultNames[tableName]
         end
 
-        for element in enumerate(Scrape.controlTables)
-            if title == lowercase(element)
-                return [element]
-            end
-        end
-        
         Lib.print_error("table not found")
         Lib.print_error("""type "table" to get a list of all tables""")
-        return 1 # no result
+        return 1
     end
 
-    function entered_table(userInput, action, prepositions)
+    function all_views(accessLvl)
+        allTables = []
+
+        for key in keys(defaultNames)
+            if haskey(users[accessLvl], key)
+                push!(allTables, users[accessLvl][key])
+            else
+                push!(allTables, defaultNames[key])
+            end
+        end
+
+        return allTables
+    end
+
+    function enter_a_table(userInput, action, prepositions, accessLvl, accessLvl)
         if length(userInput) == 1
             Lib.print_error("Please specify table to $action data $prepositions.")
-            Lib.print_error("""type "? add" for more information.""")
+            Lib.print_error("""type "? add" for more information""")
             return 1;
         end
         
-        return check_table(userInput[1])
+        return view(userInput[1], accessLvl)
     end
 
     function primary_key(table, connection)
@@ -260,28 +305,28 @@ module Table
         cmds = []
         
         if length(rawInput) == 1
+            flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
+            controlTables = ["Access","Authentication","Logs","Profil"]
+
             printstyled("All Flight Tables:\n"; color = :yellow)
-            for table in Scrape.flightTables
+            for table in flightTables
                 printstyled("  $table\n"; color = :light_cyan)
             end
 
             if accessLvl == 3 #* also show control tables if exec
                 printstyled("All Control Tables:\n"; color = :yellow)
-                for table in Scrape.controlTables
+                for table in controlTables
                     printstyled("  $table\n"; color = :light_cyan)
                 end
             end
 
-            cmds = [0]
+            cmds = [1]
         else
             if length(rawInput) > 1
-                table_name = Scrape.check_table(rawInput[2])
+                table_name = Scrape.view(rawInput[2], accessLvl)
                 cmds = [table_name]
             else
-                cmds = Scrape.flightTables
-                if accessLvl == 3
-                    cmds = vcat(Scrape.controlTables, Scrape.flightTables)
-                end
+                cmds = Scrape.all_views(accessLvl)
             end
         end
 
@@ -331,7 +376,7 @@ module Table
     function run(userInput, accessLvl, connection)
         tableTitles = _decode(userInput, accessLvl)
 
-        if tableTitles[1] == 0 return; end;
+        if tableTitles[1] == 1 return 1; end;
 
         if userInput[2] == "count"
             for title in tableTitles
@@ -364,7 +409,7 @@ module Add
     end
 
     function run(userInput, accessLvl, connection)
-        table = Scrape.entered_table(userInput, "add", "to")
+        table = Scrape.enter_a_table(userInput, "add", "to", accessLvl)
         if table == 1 return 1; end
 
         attributes = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
@@ -397,7 +442,7 @@ module Edit
     end
 
     function run(userInput, accessLvl, connection)
-        table = Scrape.entered_table(userInput, "modify", "in")
+        table = Scrape.enter_a_table(userInput, "modify", "in", accessLvl)
         if table == 1 return 1; end
 
         (tableInfo, primaryKey) = Scrape.primary_key(table, connection)
@@ -428,7 +473,7 @@ module Remove
     end
 
     function run(userInput, accessLvl, connection)
-        table = Scrape.entered_table(userInput, "remove", "from")
+        table = Scrape.enter_a_table(userInput, "remove", "from", accessLvl)
         if table == 1 return 1; end
         
         (~, primaryKey) = Scrape.primary_key(table, connection)
