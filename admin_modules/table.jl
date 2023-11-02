@@ -1,6 +1,12 @@
 #? all functions for Table command : MySQL's DESCRIBE TABLE command + count
 module Table
+    using MySQL
+    using DBInterface
     using Printf
+    
+    include("COMMON.jl"); using .Common
+    include("../interface_library.jl"); using .Lib
+    
     export run
 
     function _decode(rawInput, accessLvl)

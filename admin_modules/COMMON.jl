@@ -1,4 +1,9 @@
-module Scrape
+#? common functions for different modules
+module Common
+    using MySQL
+    using DBInterface
+    
+    include("../interface_library.jl"); using .Lib
     export table, view, all_views, enter_a_table, primary_key
 
     tableNames = Dict(

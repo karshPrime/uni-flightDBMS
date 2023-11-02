@@ -7,7 +7,6 @@ include("admin_modules/add.jl");    using .Add
 include("admin_modules/edit.jl");   using .Edit
 include("admin_modules/help.jl");   using .Help
 include("admin_modules/remove.jl"); using .Remove
-include("admin_modules/scrape.jl"); using .Scrape
 include("admin_modules/show.jl");   using .Show
 include("admin_modules/table.jl");  using .Table
 
