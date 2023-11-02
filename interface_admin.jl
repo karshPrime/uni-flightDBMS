@@ -150,75 +150,81 @@ module Help
         println("")
     end
 
-    #? narrowed down _syntax update for show command
-    function _syntax_show(access)
-        showDetails = (
-            0, "show", "[table] {OPTION [ARGUMENT]}", 
-            ["Displays all entries in a table based on the stated conditions."],
+    showDetails = (
+        0, "show", "[table] {OPTION [ARGUMENT]}", 
+        ["Displays all entries in a table based on the stated conditions."],
+        [
+            "Plane",
             [
-                "Plane",
-                [
-                    (0, "ID", "Plane ID"),
-                    (0, "airlines", "Airline to which the plane belongs"),
-                    (0, "model", "Plane model"),
-                    (0, "seats", "Total number of seats in the plane"),
-                    (0, "capacity", "Luggage capacity of the plane"),
-                    (1, "makeyear", "Year the plane was launched"),
-                    (1, "journeys", "Total number of journeys the plane has taken")
-                ],
-                "Pilot",
-                [
-                    (0, "ID", "Pilot ID"),
-                    (0, "fname", "Pilot's first name"),
-                    (0, "lname", "Pilot's last name"),
-                    (0, "age", "Pilot's age"),
-                    (0, "gender", "Pilot's gender"),
-                    (1, "nation", "Pilot's nationality"),
-                    (1, "count", "Number of flights the pilot has conducted")
-                ],
-                "Crew",
-                [
-                    (0, "ID", "Crew ID"),
-                    (0, "pilot", "ID of the Pilot leading the crew"),
-                    (0, "copilot", "ID of the Co-Pilot in the crew"),
-                    (0, "count", "Total number of staff members on the flight")
-                ],
-                "Flight",
-                [
-                    (0, "ID", "Flight ID"),
-                    (0, "planeID", "ID of the plane for this flight"),
-                    (0, "crewID", "ID of the crew assisting the flight"),
-                    (0, "departure", "Departure location"),
-                    (0, "destination", "Destination location"),
-                    (0, "time", "Departure time"),
-                    (0, "date", "Departure date"),
-                    (0, "duration", "Journey duration"),
-                    (1, "route", "Indicates whether it is a domestic or international flight"),
-                    (1, "vip", "Indicates whether a VIP is taking this flight"),
-                    (0, "food", "Indicates whether the flight serves food")
-                ],
-                "AirStaff",
-                [
-                    (0, "ID", "Staff ID"),
-                    (0, "crewID", "Crew to which they belong"),
-                    (0, "fname", "Staff's first name"),
-                    (0, "lname", "Staff's last name"),
-                    (0, "age", "Staff's age"),
-                    (0, "gender", "Staff's gender"),
-                    (0, "language", "Staff's native language")
-                ]
+                (0, "-id", "ID", "Plane ID"),
+                (0, "-a", "airlines", "Airline to which the plane belongs"),
+                (0, "-m", "model", "Plane model"),
+                (0, "-s", "seats", "Total number of seats in the plane"),
+                (0, "-c", "capacity", "Luggage capacity of the plane"),
+                (1, "-y", "manufactureYear", "Year the plane was launched"),
+                (1, "-j", "journeys", "Total number of journeys the plane has taken")
             ],
-            "Without providing an option, all entries will be displayed."
-        )
-        print_help(showDetails[1:4], access)
+            "Pilot",
+            [
+                (0, "-id", "ID", "Pilot ID"),
+                (0, "-fn", "fName", "Pilot's first name"),
+                (0, "-ln", "lName", "Pilot's last name"),
+                (0, "-a", "age", "Pilot's age"),
+                (0, "-g", "gender", "Pilot's gender"),
+                (1, "-n", "nationality", "Pilot's nationality"),
+                (1, "-c", "flightCount", "Number of flights the pilot has conducted")
+            ],
+            "Crew",
+            [
+                (0, "-id", "ID", "Crew ID"),
+                (0, "-p", "pilotID", "ID of the Pilot leading the crew"),
+                (0, "-c", "coPilotID", "ID of the Co-Pilot in the crew"),
+                (0, "-s", "staffCount", "Total number of staff members on the flight")
+            ],
+            "Flight",
+            [
+                (0, "-id", "ID", "Flight ID"),
+                (0, "-p", "planeID", "ID of the plane for this flight"),
+                (0, "-c", "crewID", "ID of the crew assisting the flight"),
+                (0, "-s", "departure", "Departure/Start location"),
+                (0, "-g", "destination", "Destination/Goal location"),
+                (0, "-t", "takeOffTime", "Departure time"),
+                (0, "-d", "takeOffDate", "Departure date"),
+                (0, "-j", "duration", "Journey duration"),
+                (1, "-f", "routeType", "Indicates whether it is a domestic or international flight"),
+                (1, "-vip", "hasVIP", "Indicates whether a VIP is taking this flight"),
+                (0, "-f", "hasFood", "Indicates whether the flight serves food")
+            ],
+            "AirStaff",
+            [
+                (0, "-id", "ID", "Staff ID"),
+                (0, "-c", "crewID", "Crew to which they belong"),
+                (0, "-fn", "fName", "Staff's first name"),
+                (0, "-ln", "lName", "Staff's last name"),
+                (0, "-a", "age", "Staff's age"),
+                (0, "-g", "gender", "Staff's gender"),
+                (0, "-l", "nativeLanguage", "Staff's native language")
+            ]
+        ],
+        "Without providing an option, all entries will be displayed."
+    )
 
-        for i in 1:5
-            table = showDetails[5][(i*2)-1]
+    #? narrowed down _syntax update for show command
+    function _syntax_show(accessLvl)
+        print_help(showDetails[1:4], accessLvl)
+
+        listLen = length(showDetails[5])
+        if accessLvl != 3
+            listLen -= 10
+        end
+
+        for i in 1:listLen:2
+            table = showDetails[5][i]
             printstyled("Options for $table table:\n"; color = :yellow)
-            for (allowed, title, info) in showDetails[5][i*2]
-                if allowed <= access
-                    print("  $title")
-                    spaceCounter = length(title)
+            for (allowed,cmdName, ~, info) in showDetails[5][i+1]
+                if allowed <= accessLvl
+                    print("  $cmdName")
+                    spaceCounter = length(cmdName)
                     while spaceCounter < 15
                         spaceCounter +=1
                         print(" ")
@@ -501,6 +507,57 @@ module Remove
         action = DBInterface.execute(connection, sqlCmd)
 
         _print_result(action, accessLvl)
+    end
+end
+
+#? all functions for Show command : MySQL's SELECT command
+module Show
+    export run
+
+    function _decode(userInput, accessLvl)
+        tableIDs = Dict(
+            "plane"    => 2,
+            "pilot"    => 4,
+            "crew"     => 6,
+            "light"    => 8,
+            "airstaff" => 10
+        )
+
+        if haskey(tableIDs, userInput[1])
+            infoIndex = tableIDs[userInput[1]]
+        else
+            return 1
+        end
+
+        sqlCmd = ""
+        for prompt in userInput[2:end]
+            (perms, trigger, sql) = Help.showDetails[5][infoIndex][1:3]
+            if perms <= accessLvl
+                if prompt == trigger
+                    sqlCmd = Lib.generate_sql(sqlCmd, sql, userInput[i + 1])
+                end
+            end
+        end
+
+        return sqlCmd
+    end
+
+    function run(userInput, accessLvl, connection)
+        if length(userInput) == 1
+            Lib.print_error("Please specify table to select data from.")
+            Lib.print_error("""type "? show" for more information""")
+            return 1
+        end
+
+        view = Scrape.view(userInput[2], accessLvl)
+        if view == 1 return 1; end
+
+        sqlCmd = _decode(userInput[2:end], accessLvl)
+        if sqlCmd == 1 return 1; end
+
+        sqlCmd = "SELECT * FROM $view" * sqlCmd
+        result = DBInterface.fetch(DBInterface.execute(connection, sqlCmd))
+
     end
 end
 
