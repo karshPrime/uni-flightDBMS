@@ -232,10 +232,10 @@ module Help
 
         listLen = length(showDetails[5])
         if accessLvl != 3
-            listLen -= 8
+            listLen -= 4
         end
 
-        for i in 1:listLen:2
+        for i in 1:2:listLen
             table = showDetails[5][i]
             printstyled("Options for $table table:\n"; color = :yellow)
             for (allowed,cmdName, ~, info) in showDetails[5][i+1]
