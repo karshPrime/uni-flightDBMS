@@ -7,6 +7,10 @@ using .Auth
 include("interface_library.jl") # functions with "Lib." prefix
 using .Lib
 
+using MySQL
+using DBInterface
+using Printf
+
 module Scrape
     export table, view, all_views, enter_a_table, primary_key
 
@@ -37,9 +41,9 @@ module Scrape
         "airstaff" => "Crew",
         "plane"    => "Flight",
         "pilot"    => "AirStaff",
-        "logs"     => "Logs"
-        "profile"  => "Profile"
-        "access"   => "Access"
+        "logs"     => "Logs",
+        "profile"  => "Profile",
+        "access"   => "Access",
         "auth"     => "Authentication"
     )
 
@@ -47,7 +51,7 @@ module Scrape
         0 => helpdeskView,
         1 => associateView,
         2 => tableNames, # since manager has access to all
-        3 => executive,
+        3 => executiveView,
     )
 
     function table(title)
@@ -95,7 +99,7 @@ module Scrape
     function enter_a_table(userInput, action, prepositions)
         if length(userInput) == 1
             Lib.print_error("Please specify table to $action data $prepositions.")
-            Lib.print_error("""type "? add" for more information""")
+            Lib.print_error("""type "? $action" for more information""")
             return 1;
         end
         
@@ -119,7 +123,7 @@ end
 
 #? all functions for Help command
 module Help
-    export run
+    export run, showDetails
 
     #? beautify help dialogue
     function _syntax(cmd, access)
@@ -321,6 +325,7 @@ end
 
 #? all functions for Table command : MySQL's DESCRIBE TABLE command + count
 module Table
+    using Printf
     export run
 
     function _decode(rawInput, accessLvl)
@@ -465,7 +470,7 @@ module Edit
     end
 
     function run(userInput, accessLvl, connection)
-        table = Scrape.enter_a_table(userInput, "modify", "in", accessLvl)
+        table = Scrape.enter_a_table(userInput, "edit", "in", accessLvl)
         if table == 1 return 1; end
 
         (tableInfo, primaryKey) = Scrape.primary_key(table, connection)
@@ -476,9 +481,9 @@ module Edit
 
         # Prompt for changes
         for row in tableInfo
-            println("> ${row[:Field]}: ")
+            println("> $row[:Field]: ")
             newData = chomp(readline())
-            sqlCmd = "UPDATE $table SET ${row[:Field]} = '$newData' WHERE $primaryKey = $id;"
+            sqlCmd = "UPDATE $table SET $row[:Field]=   '$newData' WHERE $primaryKey = $id;"
             
             actionLog = DBInterface.execute(connection, sqlCmd)
 
@@ -587,11 +592,11 @@ function main()
 
     #? define dictionary for all sql command modules
     modules = Dict(
-        "about"  => About,
+        "table"  => Table,
         "add"    => Add,
         "edit"   => Edit,
         "remove" => Remove,
-        "count"  => Count
+        "show"   => Show
     )
 
     #* initialising variables
