@@ -126,8 +126,8 @@ module Help
     export run, showDetails
 
     #? beautify help dialogue
-    function _syntax(cmd, access)
-        printstyled("Usage: "; color = :yellow)
+    function _syntax(cmd, accessLvl)
+        printstyled("\nUsage: "; color = :yellow)
         print(cmd[2])
         extra = cmd[3]
         printstyled(" $extra \n"; color = :light_cyan)
@@ -137,11 +137,11 @@ module Help
             println("  $description")
         end
 
-        if length(cmd[5]) < 1; println(""); return; end
+        if length(cmd) < 5; println(""); return; end
 
-        printstyled("Options:\n"; color = :yellow)
+        printstyled("\nOptions:\n"; color = :yellow)
         for (allowed, title, info) in cmd[5]
-            if allowed <= access
+            if allowed <= accessLvl
                 print("  $title")
                 spaceCounter = length(title)
                 while spaceCounter < 15
@@ -208,6 +208,19 @@ module Help
                 (0, "-a", "age", "Staff's age"),
                 (0, "-g", "gender", "Staff's gender"),
                 (0, "-l", "nativeLanguage", "Staff's native language")
+            ],
+            "Employees",
+            [
+                (3, "-id", "ID", "Search for Emplyee from ID"),
+                (3, "-r", "Role", "List all employess from a certain department")
+            ],
+            "Logs",
+            [
+                (3, "-d", "date", "Get logs from a specific date [yyyy-mm-dd]"),
+                (3, "-t", "time", "Get logs from a specific time [hh:rr]"),
+                (3, "-e", "authorID", "logs of a certain employee"),
+                (3, "-a", "action", "logs for a certain action"),
+                (3, "-r", "record", "logs for actions in a specific record")
             ]
         ],
         "Without providing an option, all entries will be displayed."
@@ -215,11 +228,11 @@ module Help
 
     #? narrowed down _syntax update for show command
     function _syntax_show(accessLvl)
-        print_help(showDetails[1:4], accessLvl)
+        _syntax(showDetails[1:4], accessLvl)
 
         listLen = length(showDetails[5])
         if accessLvl != 3
-            listLen -= 10
+            listLen -= 8
         end
 
         for i in 1:listLen:2
@@ -243,7 +256,7 @@ module Help
     end
 
     #? print help menu showing all possible commands for the loggedin user
-    function run(access, option)
+    function run(accessLvl, option)
         #* helpdesk = 0 | associate = 1 | manager = 2 | executive = 3
         helpDetails = (
             0, "?", "{OPTION}", 
@@ -252,11 +265,10 @@ module Help
                 "Enter Option for more comprehensive guide."
             ],
             [
-                (0, "about", "Get general information"),
+                (0, "table", "Get general information"),
                 (1, "add", "Add entry to a table"),
                 (2, "edit", "Modify existing entry in a table"),
                 (2, "remove", "Remove entries from a table"),
-                (0, "count", "Get entry count"),
                 (0, "show", "View specific entries")
             ]
         )
@@ -296,29 +308,24 @@ module Help
             ]
         )
 
-        countDetails = (
-            0, "count", "{TABLE}", 
-            [
-                "Lists the number of entries in the specified table.",
-                "If no table is specified, it lists the number of entries in each table."
-            ]
-        )
-
         #* print help for only the section user specified
         option_map = Dict(
-            "table" => tableDetails,
-            "add" => addDetails,
-            "edit" => editDetails,
+            "table"  => tableDetails,
+            "add"    => addDetails,
+            "edit"   => editDetails,
             "remove" => removeDetails,
-            "count" => countDetails,
-            "show" => showDetails,
+            "show"   => showDetails
         )
 
         if haskey(option_map, option)
-            _syntax(option_map[option], access)
+            if option == "show"
+                _syntax_show(accessLvl)
+            else
+                _syntax(option_map[option], accessLvl)
+            end
         else
             #* same as help without args
-            _syntax(helpDetails, access)
+            _syntax(helpDetails, accessLvl)
         end
     end
 end
@@ -599,6 +606,13 @@ function main()
         "show"   => Show
     )
 
+    accessID = Dict(
+        "helpdesk"  => 0,
+        "associate" => 1,
+        "manager"   => 2,
+        "executive" => 3
+    )
+
     #* initialising variables
     (connection, username, accessLvl) = ("", "", "")
 
@@ -627,12 +641,12 @@ function main()
             end
 
             if userInput[1] == "?" #* help
-                Help.run(accessLvl, length(userInput) > 1 ? userInput[2] : " ")
+                Help.run(accessID[accessLvl], length(userInput) > 1 ? userInput[2] : " ")
                 continue
             end
 
             if haskey(modules, userInput[1])
-                modules[userInput].run(userInput, accessLvl, connection)
+                modules[userInput].run(userInput, accessID[accessLvl], connection)
             else
                 Lib.print_error("command not found")
             end
