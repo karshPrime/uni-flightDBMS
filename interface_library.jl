@@ -85,6 +85,6 @@ module Lib
     end
     
     function print_error(prompt)
-        printstyled("<!> $prompt <!>\n"; color = :red)
+        printstyled("\n<!> $prompt <!>\n"; color = :red)
     end
 end

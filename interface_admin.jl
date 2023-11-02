@@ -578,7 +578,7 @@ end
 
 #? login prompt
 function login()
-    printstyled("User ID  > "; color = :green)
+    printstyled("\nUser ID  > "; color = :green)
     userid = readline()
     printstyled("Password > "; color = :red)
     userpass = readline()
@@ -610,19 +610,19 @@ function main()
             print_error("AUTHENTICATION FAIL")
         else
             (connection, username, accessLvl) = Auth.connect(userid, token)
-            printstyled("Welcome $username"; color = :yellow)
+            printstyled("\nWelcome $username :.:.:.:.:.:\n"; color = :yellow)
             break #! stop loop if login is successful
         end
     end
 
     while true
-        userInput = Lib.take_input("[$username | $accessLvl]") #* [Bob Dayne | Manager] 
+        userInput = Lib.take_input("[$username | $accessLvl] \$") #* [Bob Dayne | Manager] $ 
 
         if length(userInput) > 0 #* ignore blank input
             if userInput[1] == "x" #* quit
                 DBInterface.close!
-                printstyled("Goodbye $username...\n"; color = :light_blue)
-                println("logged out")
+                printstyled("\nGoodbye $username...\n"; color = :light_blue)
+                println("logged out\n")
                 break
             end
 
