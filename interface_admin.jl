@@ -16,8 +16,8 @@ using Printf
 
 #? login prompt
 function login()
-    return ("101","sunshine2023") #! debug HELPDESK
-    #return ("103", "secret1234")  #! debug ASSOCIATE
+    #return ("101","sunshine2023") #! debug HELPDESK
+    return ("103", "secret1234")  #! debug ASSOCIATE
     #return ("109","happyDays42")  #! debug MANAGER
     #return ("105","soccerFan#1")  #! debug EXECUTIVE
     
@@ -82,7 +82,7 @@ function main()
             end
 
             if haskey(modules, userInput[1])
-                if length(userInput) > 1
+                if length(userInput) > 2
                     if userInput[3] in ["access", "authentication", "logs", "profile"]
                         if accessID[accessLvl] == 3
                             DBInterface.execute(connection, "SET ROLE rExecutive;");
