@@ -9,9 +9,10 @@ module Table
     
     export run
 
+    _controlTables = ["Access","Authentication","Logs","Profile"]
+
     function _decode(rawInput, accessLvl)
         flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
-        controlTables = ["Access","Authentication","Logs","Profile"]
         cmds = []
         
         if length(rawInput) == 1
@@ -22,9 +23,8 @@ module Table
 
             if accessLvl == 3 #* also show control tables if exec
                 printstyled("\nAll Control Tables:\n"; color = :yellow)
-                for table in controlTables
-                    printstyled("  $table\n"; color = :light_cyan)
-                end
+                printstyled("  Employees\n"; color = :light_cyan)
+                printstyled("  Logs\n"; color = :light_cyan) 
             end
 
             cmds = [1]
@@ -33,7 +33,7 @@ module Table
                 tableName = Common.view(rawInput[3], accessLvl)
                 cmds = [tableName]
             elseif accessLvl == 3
-                cmds = vcat(flightTables, controlTables)
+                cmds = vcat(flightTables, _controlTables)
             else
                 cmds = all_views(accessLvl)
             end
@@ -111,7 +111,6 @@ module Table
             end
 
         elseif userInput[2] == "about"
-            cmdHead = "DESCRIBE "
             for title in tableTitles
                 fullCmd = "DESCRIBE " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
