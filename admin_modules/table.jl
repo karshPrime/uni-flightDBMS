@@ -101,6 +101,10 @@ module Table
 
         if userInput[2] == "count"
             for title in tableTitles
+                if accessLvl == 3
+                    Common.flip_exec_db((title in _controlTables), connection)
+                end
+
                 fullCmd = "SELECT COUNT(*) FROM " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
                 _print_result_count(result, _table_name(title))

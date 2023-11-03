@@ -17,9 +17,9 @@ using Printf
 #? login prompt
 function login()
     #return ("101","sunshine2023") #! debug HELPDESK
-    return ("103", "secret1234")  #! debug ASSOCIATE
+    #return ("103", "secret1234")  #! debug ASSOCIATE
     #return ("109","happyDays42")  #! debug MANAGER
-    #return ("105","soccerFan#1")  #! debug EXECUTIVE
+    return ("105","soccerFan#1")  #! debug EXECUTIVE
     
     printstyled("\nUser ID  > "; color = :green)
     userid = readline()
@@ -83,13 +83,7 @@ function main()
 
             if haskey(modules, userInput[1])
                 if length(userInput) > 2 && accessID[accessLvl] == 3
-                    if userInput[3] in ["access", "authentication", "logs", "profile"]
-                        DBInterface.execute(connection, "SET ROLE rExecutive;");
-                        DBInterface.execute(connection, "USE control_db;");
-                    else
-                        DBInterface.execute(connection, "SET ROLE rManager;");
-                        DBInterface.execute(connection, "USE flight_db;");
-                    end
+                    Common.flip_exec_db((userInput[3] in ["access", "authentication", "logs", "profile"]), connection)
                 end                
 
                 modules[userInput[1]].run(userInput, accessID[accessLvl], connection)

@@ -4,7 +4,7 @@ module Common
     using DBInterface
     
     include("../interface_library.jl"); using .Lib
-    export table, view, all_views, enter_a_table, primary_key, confirm
+    export table, view, all_views, enter_a_table, primary_key, confirm, flip_exec_db
 
     tableNames = Dict(
         "plane"    => "Plane",
@@ -117,5 +117,15 @@ module Common
         confirm = lowercase(chomp(readline()))
 
         return confirm == "n"
+    end
+
+    function flip_exec_db(control, connection)
+        if control
+            DBInterface.execute(connection, "SET ROLE rExecutive;");
+            DBInterface.execute(connection, "USE control_db;");
+        else
+            DBInterface.execute(connection, "SET ROLE rManager;");
+            DBInterface.execute(connection, "USE flight_db;");
+        end
     end
 end
