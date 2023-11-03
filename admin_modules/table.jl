@@ -53,6 +53,10 @@ module Table
             default = coalesce(row[:Default], "missing")
             default = default == "missing" ? "null" : join(Char.(default))
 
+            if length(default) > 10 && default[1:7] == "_latin1"
+                default = default[10:end-2]
+            end
+
             key = if row[:Key] == "PRI"
                 "Primary"
             elseif row[:Key] == "MUL"
