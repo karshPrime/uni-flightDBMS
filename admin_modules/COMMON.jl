@@ -24,26 +24,13 @@ module Common
         "crew"     => "ACrew",
         "flight"   => "AFlight",
         "airstaff" => "AAirStaff",
-
-    )
-
-    executiveView = Dict(
-        "crew"     => "Plane",
-        "flight"   => "Pilot",
-        "airstaff" => "Crew",
-        "plane"    => "Flight",
-        "pilot"    => "AirStaff",
-        "logs"     => "Logs",
-        "profile"  => "Profile",
-        "access"   => "Access",
-        "authentication"     => "Authentication"
     )
 
     users = Dict(
         0 => helpdeskView,
         1 => associateView,
         2 => tableNames, # since manager has access to all
-        3 => executiveView,
+        3 => tableNames  # and so does the executive
     )
 
     function table(title)
@@ -76,12 +63,6 @@ module Common
                 push!(allViews, users[accessLvl][key])
             else
                 push!(allViews, tableNames[key])
-            end
-        end
-
-        if accessLvl == 3
-            for key in keys(executiveView)
-                push!(allViews, executiveView[key])
             end
         end
 

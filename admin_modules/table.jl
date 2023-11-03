@@ -9,22 +9,14 @@ module Table
     
     export run
 
-    _controlTables = ["Access","Authentication","Logs","Profile"]
-
     function _decode(rawInput, accessLvl)
         flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
         cmds = []
         
         if length(rawInput) == 1
-            printstyled("All Flight Tables:\n"; color = :yellow)
+            printstyled("\nAll Flight Tables:\n"; color = :yellow)
             for table in flightTables
                 printstyled("  $table\n"; color = :light_cyan)
-            end
-
-            if accessLvl == 3 #* also show control tables if exec
-                printstyled("\nAll Control Tables:\n"; color = :yellow)
-                printstyled("  Employees\n"; color = :light_cyan)
-                printstyled("  Logs\n"; color = :light_cyan) 
             end
 
             cmds = [1]
@@ -32,8 +24,6 @@ module Table
             if length(rawInput) > 2
                 tableName = Common.view(rawInput[3], accessLvl)
                 cmds = [tableName]
-            elseif accessLvl == 3
-                cmds = vcat(flightTables, _controlTables)
             else
                 cmds = all_views(accessLvl)
             end
@@ -101,10 +91,6 @@ module Table
 
         if userInput[2] == "count"
             for title in tableTitles
-                if accessLvl == 3
-                    Common.flip_exec_db((title in _controlTables), connection)
-                end
-
                 fullCmd = "SELECT COUNT(*) FROM " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
                 _print_result_count(result, _table_name(title))

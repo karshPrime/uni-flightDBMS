@@ -83,20 +83,7 @@ module Help
                 (0, "-a", "age", "Staff's age"),
                 (0, "-g", "gender", "Staff's gender"),
                 (0, "-l", "nativeLanguage", "Staff's native language")
-            ],
-            "Employees",
-            [
-                (3, "-id", "ID", "Search for Emplyee from ID"),
-                (3, "-r", "Role", "List all employess from a certain department")
-            ],
-            "Logs",
-            [
-                (3, "-d", "date", "Get logs from a specific date [yyyy-mm-dd]"),
-                (3, "-t", "time", "Get logs from a specific time [hh:rr]"),
-                (3, "-e", "authorID", "logs of a certain employee"),
-                (3, "-a", "action", "logs for a certain action"),
-                (3, "-r", "record", "logs for actions in a specific record")
-            ]
+            ]            
         ],
         "Without providing an option, all entries will be displayed."
     )
@@ -105,20 +92,13 @@ module Help
     function _syntax_show(accessLvl)
         _syntax(showDetails[1:4], accessLvl)
 
-        listLen = length(showDetails[5])
-        if accessLvl != 3
-            listLen -= 4
-        end
-
-        for i in 1:2:listLen
+        for i in 1:2:length(showDetails[5])
             table = showDetails[5][i]
             printstyled("Options for $table table:\n"; color = :yellow)
             for (allowed,cmdName, ~, info) in showDetails[5][i+1]
                 if allowed <= accessLvl
                     print("  $cmdName")
-                    spaceCounter = length(cmdName)
-                    while spaceCounter < 15
-                        spaceCounter +=1
+                    for i in length(cmdName):10
                         print(" ")
                     end
                     printstyled(" $info\n"; color = :light_cyan)
@@ -144,7 +124,9 @@ module Help
                 (1, "add", "Add entry to a table"),
                 (2, "edit", "Modify existing entry in a table"),
                 (2, "remove", "Remove entries from a table"),
-                (0, "show", "View specific entries")
+                (0, "show", "View specific entries"),
+                (3, "staff", "Manage employeed staff"),
+                (3, "logs", "View system logs")
             ]
         )
 
@@ -183,13 +165,42 @@ module Help
             ]
         )
 
+        staffDetails = (
+            3, "staff", "{OPTION}",
+            [
+                "Displays employed staff members' records.",
+                "With no argument it lists all records."
+            ],
+            [
+                (3, "search", "Look for a specific employee with their ID"),
+                (3, "department", "Look for all employees from a department")
+            ]
+        )
+
+        logsDetails = (
+            3, "logs", "{OPTION}",
+            [
+                "Prints all system logs.",
+                "Use options to filter data."
+            ],
+            [
+                (3, "on", "Actions performed on a specific date [yyyy-mm-dd]"),
+                (3, "time", "Actions executed at a specific time [hh:rr]"),
+                (3, "user", "logs of a certain employee"),
+                (3, "action", "logs for a certain action"),
+                (3, "record", "logs for actions in a specific record")
+            ]
+        )
+
         #* print help for only the section user specified
         option_map = Dict(
             "table"  => tableDetails,
             "add"    => addDetails,
             "edit"   => editDetails,
             "remove" => removeDetails,
-            "show"   => showDetails
+            "show"   => showDetails,
+            "staff"  => staffDetails,
+            "logs"   => logsDetails
         )
 
         if haskey(option_map, option)

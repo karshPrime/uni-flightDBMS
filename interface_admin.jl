@@ -1,13 +1,15 @@
 #! program interface for airline admins
 #* admins should only be able to view and edit data that they're permitted to.
 
-include("authenticator.jl");        using .Auth
-include("interface_library.jl");    using .Lib
 include("admin_modules/add.jl");    using .Add
+include("authenticator.jl");        using .Auth
 include("admin_modules/edit.jl");   using .Edit
 include("admin_modules/help.jl");   using .Help
+include("interface_library.jl");    using .Lib
+include("admin_modules/logs.jl");   using .Logs
 include("admin_modules/remove.jl"); using .Remove
 include("admin_modules/show.jl");   using .Show
+include("admin_modules/staff.jl");  using .Staff
 include("admin_modules/table.jl");  using .Table
 
 using MySQL
@@ -39,7 +41,9 @@ function main()
         "add"    => Add,
         "edit"   => Edit,
         "remove" => Remove,
-        "show"   => Show
+        "show"   => Show,
+        "staff"  => Staff,
+        "Logs"   => Logs
     )
 
     accessID = Dict(
@@ -82,10 +86,6 @@ function main()
             end
 
             if haskey(modules, userInput[1])
-                if length(userInput) > 2 && accessID[accessLvl] == 3
-                    Common.flip_exec_db((userInput[3] in ["access", "authentication", "logs", "profile"]), connection)
-                end                
-
                 modules[userInput[1]].run(userInput, accessID[accessLvl], connection)
             else
                 Lib.print_error("command not found")
