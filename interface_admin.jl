@@ -82,15 +82,10 @@ function main()
             end
 
             if haskey(modules, userInput[1])
-                if length(userInput) > 2
+                if length(userInput) > 2 && accessID[accessLvl] == 3
                     if userInput[3] in ["access", "authentication", "logs", "profile"]
-                        if accessID[accessLvl] == 3
-                            DBInterface.execute(connection, "SET ROLE rExecutive;");
-                            DBInterface.execute(connection, "USE control_db;");
-                        else
-                            Lib.print_error("you don't have permissions to do that")
-                            continue
-                        end
+                        DBInterface.execute(connection, "SET ROLE rExecutive;");
+                        DBInterface.execute(connection, "USE control_db;");
                     else
                         DBInterface.execute(connection, "SET ROLE rManager;");
                         DBInterface.execute(connection, "USE flight_db;");
