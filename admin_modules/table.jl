@@ -78,16 +78,20 @@ module Table
         Lib.draw_border([27,7,9,12])
     end
 
-    function _print_result_count(data, table)
-        if table in ["HFlight","HPilot","HPlane","ACrew","AFlight","AAirStaff"]
-            table = table[2:end]
-        end
-
+    function _print_result_count(data, tableName)
         for row in data
-            printstyled("Count of $table Entries: "; color = :yellow)
+            printstyled("Count of $tableName Entries: "; color = :yellow)
             count = row[1]
             printstyled("$count\n"; color = :light_cyan)
         end
+    end
+
+    function _table_name(title)
+        if title in ["HFlight","HPilot","HPlane","ACrew","AFlight","AAirStaff"]
+            return title[2:end]
+        end
+
+        return title
     end
 
     function run(userInput, accessLvl, connection)
@@ -99,7 +103,7 @@ module Table
             for title in tableTitles
                 fullCmd = "SELECT COUNT(*) FROM " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
-                _print_result_count(result, title)
+                _print_result_count(result, _table_name(title))
             end
 
         elseif userInput[2] == "about"
@@ -107,6 +111,12 @@ module Table
             for title in tableTitles
                 fullCmd = "DESCRIBE " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
+                
+                #? print table name only when multiple tables are printed; otherwise redundant
+                if length(tableTitles) > 1 
+                    printstyled("\n$(_table_name(title))\n"; color = :light_yellow)
+                end
+
                 _print_result_about(result)
             end
         else
