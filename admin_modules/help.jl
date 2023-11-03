@@ -20,9 +20,7 @@ module Help
         for (allowed, title, info) in cmd[5]
             if allowed <= accessLvl
                 print("  $title")
-                spaceCounter = length(title)
-                while spaceCounter < 15
-                    spaceCounter +=1
+                for i in length(title):10
                     print(" ")
                 end
                 printstyled(" $info\n"; color = :light_cyan)
