@@ -82,6 +82,21 @@ function main()
             end
 
             if haskey(modules, userInput[1])
+                if length(userInput) > 1
+                    if userInput[3] in ["access", "authentication", "logs", "profile"]
+                        if accessID[accessLvl] == 3
+                            DBInterface.execute(connection, "SET ROLE rExecutive;");
+                            DBInterface.execute(connection, "USE control_db;");
+                        else
+                            Lib.print_error("you don't have permissions to do that")
+                            continue
+                        end
+                    else
+                        DBInterface.execute(connection, "SET ROLE rManager;");
+                        DBInterface.execute(connection, "USE flight_db;");
+                    end
+                end                
+
                 modules[userInput[1]].run(userInput, accessID[accessLvl], connection)
             else
                 Lib.print_error("command not found")

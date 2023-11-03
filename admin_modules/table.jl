@@ -11,7 +11,7 @@ module Table
 
     function _decode(rawInput, accessLvl)
         flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
-        controlTables = ["Access","Authentication","Logs","Profil"]
+        controlTables = ["Access","Authentication","Logs","Profile"]
         cmds = []
         
         if length(rawInput) == 1
@@ -21,7 +21,7 @@ module Table
             end
 
             if accessLvl == 3 #* also show control tables if exec
-                printstyled("All Control Tables:\n"; color = :yellow)
+                printstyled("\nAll Control Tables:\n"; color = :yellow)
                 for table in controlTables
                     printstyled("  $table\n"; color = :light_cyan)
                 end
@@ -29,13 +29,13 @@ module Table
 
             cmds = [1]
         else
-            if length(rawInput) > 1
-                tableName = Scrape.table(rawInput[2])
+            if length(rawInput) > 2
+                tableName = Common.view(rawInput[3], accessLvl)
                 cmds = [tableName]
             elseif accessLvl == 3
                 cmds = vcat(flightTables, controlTables)
             else
-                cmds = flightTables
+                cmds = all_views(accessLvl)
             end
         end
 
@@ -43,9 +43,9 @@ module Table
     end
 
     function _print_result_about(data)
-        Lib.draw_border([27,5,9,12])
+        Lib.draw_border([27,7,9,12])
         Lib.table_head(["Field","Null","Key","Default"],[24,4,6,9])
-        Lib.draw_border([27,5,9,12])
+        Lib.draw_border([27,7,9,12])
         for row in data
             field = row[:Field]
             null = coalesce(row[:Null], "Missing") == "NO" ?  " x " : " ✔ "
@@ -61,7 +61,7 @@ module Table
                  "   -"
             end
         
-            formatted_row = @sprintf("| %-25s | %-3s | %-7s | %-10s |", 
+            formatted_row = @sprintf("| %-25s | %-5s | %-7s | %-10s |", 
                 field, 
                 null, 
                 key, 
@@ -71,14 +71,18 @@ module Table
             printstyled(formatted_row, color = :light_cyan)
             println("")  # New line after each row
         end
-        Lib.draw_border([27,5,9,12])
+        Lib.draw_border([27,7,9,12])
     end
 
-    function _print_result_count(data)
+    function _print_result_count(data, table)
+        if table in ["HFlight","HPilot","HPlane","ACrew","AFlight","AAirStaff"]
+            table = table[2:end]
+        end
+
         for row in data
-            printstyled("Count of Crew: "; color = :yellow)
+            printstyled("Count of $table Entries: "; color = :yellow)
             count = row[1]
-            printstyled("$count\n\n"; color = :light_cyan)
+            printstyled("$count\n"; color = :light_cyan)
         end
     end
 
@@ -91,7 +95,7 @@ module Table
             for title in tableTitles
                 fullCmd = "SELECT COUNT(*) FROM " * title
                 result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
-                _print_result_count(result)
+                _print_result_count(result, title)
             end
 
         elseif userInput[2] == "about"
