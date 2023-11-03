@@ -36,7 +36,7 @@ module Common
         "logs"     => "Logs",
         "profile"  => "Profile",
         "access"   => "Access",
-        "auth"     => "Authentication"
+        "authentication"     => "Authentication"
     )
 
     users = Dict(
@@ -95,7 +95,7 @@ module Common
             return 1;
         end
         
-        return table(userInput[1])
+        return table(userInput[2])
     end
 
     function primary_key(table, connection)
