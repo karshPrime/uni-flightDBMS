@@ -29,6 +29,8 @@ module Add
             value = chomp(readline())
             data[columnName] = value
         end
+
+        if Common.decline() return 2; end
         
         columns = join(keys(data), ", ")
         info = join(values(data), """ "," """)

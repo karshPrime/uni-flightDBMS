@@ -4,7 +4,7 @@ module Common
     using DBInterface
     
     include("../interface_library.jl"); using .Lib
-    export table, view, all_views, enter_a_table, primary_key
+    export table, view, all_views, enter_a_table, primary_key, confirm
 
     tableNames = Dict(
         "plane"    => "Plane",
@@ -110,5 +110,12 @@ module Common
         end
 
         return (tableInfo, primaryKey)
+    end
+
+    function decline()
+        printstyled("<!> Confirm Changes [Y/n] : "; color = :red)
+        confirm = lowercase(chomp(readline()))
+
+        return confirm == "n"
     end
 end
