@@ -13,6 +13,9 @@ module Remove
         (~, primaryKey) = Scrape.primary_key(table, connection)
         println("Enter $primaryKey for entry you wish to delete: ")
         id = chomp(readline())
+        
+        if Common.decline() return 2; end
+
         sqlCmd = "DELETE FROM $tableName WHERE $primaryKey = $id;"
 
         action = DBInterface.execute(connection, sqlCmd)
