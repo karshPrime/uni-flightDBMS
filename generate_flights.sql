@@ -135,10 +135,9 @@ CREATE VIEW ACrew AS SELECT ID, staffCount, pilotID, coPilotID FROM flight_db.Cr
 CREATE VIEW AFlight AS SELECT ID, hasVIP, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood FROM flight_db.Flight;
 CREATE VIEW AAirStaff AS SELECT ID, fName, lName, age, gender, nativeLanguage, crewID FROM flight_db.AirStaff;
 
-GRANT UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
-GRANT UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
-GRANT INSERT ON flight_db.Flight TO rAssociate;
-GRANT UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
+GRANT SELECT, UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
+GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
+GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
 GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; 
 GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; 
 GRANT SELECT ON ACrew TO rAssociate;
