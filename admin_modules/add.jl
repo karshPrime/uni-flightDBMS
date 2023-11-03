@@ -1,5 +1,10 @@
 #? all functions for Add command : MySQL's INSERT command
 module Add
+    using MySQL
+    using DBInterface
+
+    include("COMMON.jl"); using .Common
+    
     export run
 
     function _print_result(data, access)
@@ -7,7 +12,7 @@ module Add
     end
 
     function run(userInput, accessLvl, connection)
-        table = Scrape.enter_a_table(userInput, "add", "to", accessLvl)
+        table = Common.enter_a_table(userInput, "add", "to")
         if table == 1 return 1; end
 
         attributes = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
@@ -15,18 +20,21 @@ module Add
         data = Dict{String, String}()
         
         for column in attributes
-            column_name = column[:Field]
-            print("> $column_name : ")
+            columnName = column[:Field]
+            
+            #* this information is auto generated
+            if columnName == "staffCount" continue; end
+
+            printstyled("> $columnName : "; color = :yellow)
             value = chomp(readline())
-            data[column_name] = value
+            data[columnName] = value
         end
         
         columns = join(keys(data), ", ")
-        values = join(values(data), ", ")
+        info = join(values(data), """ "," """)
         
-        sqlCmd = """INSERT INTO $table_name ($columns) VALUES ("$values");"""
-        DBInterface.execute(connection, sqlCmd)
-
+        sqlCmd = """INSERT INTO $table ($columns) VALUES ("$info");"""
+        result = DBInterface.execute(connection, sqlCmd)
         _print_result(result, accessLvl)
     end
 end
