@@ -150,7 +150,7 @@ module Help
         )
 
         editDetails = (
-            1, "edit", "[table] for [condition] with [changes] {FORCE}",
+            1, "edit", "[table]",
             [
                 "Edits the table with the specified changes for entries that match the condition.",
                 "Use FORCE to skip confirmation."

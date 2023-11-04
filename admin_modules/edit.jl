@@ -21,19 +21,28 @@ module Edit
         id = chomp(readline())
 
         printstyled("Enter == to leave the field unchanged\n"; color = :red)
+
+        conditions = ""
         
         # Prompt for changes
         for row in tableInfo
             printstyled("> $(row[:Field]): "; color = :yellow)
             newData = chomp(readline())
-
-            if newData == "==" continue; end
-
-            sqlCmd = "UPDATE $table SET $row[:Field]=   '$newData' WHERE $primaryKey = $id;"
-            
-            result = DBInterface.execute(connection, sqlCmd)
-
-            _print_result(result, accessLvl)
+        
+            if newData in ["==", ""] continue; end
+        
+            if occursin(r"^\d*$", newData)  # Check if newData is an integer
+                conditions *= ", $(row[:Field]) = $newData"
+            else
+                conditions *= ", $(row[:Field]) = '$newData'"
+            end
         end
+
+        if Common.decline() return 2; end
+
+        sqlCmd = "UPDATE $table SET $(conditions[3:end]) WHERE $primaryKey = $id ;"
+        result = DBInterface.execute(connection, sqlCmd)
+        
+        _print_result(result, accessLvl)
     end
 end
