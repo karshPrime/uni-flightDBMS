@@ -51,7 +51,7 @@ module Show
         view = Common.view(userInput[2], accessLvl)
         if view == 1 return 1; end
 
-        sqlCmd = _decode(userInput[2:end], accessLvl)
+        sqlCmd = _decode(userInput, accessLvl)
         if sqlCmd == 1 return 1; end
 
         sqlCmd = "SELECT * FROM $view $sqlCmd ;"
