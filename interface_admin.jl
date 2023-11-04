@@ -72,7 +72,7 @@ function main()
     while true
         userInput = Lib.take_input("[$username | $accessLvl] \$") #* [Bob Dayne | Manager] $ 
 
-        if length(userInput) > 0 #* ignore blank input
+        if length(userInput) > 0
             if userInput[1] == "x" #* quit
                 DBInterface.close!
                 printstyled("\nGoodbye $username...\n"; color = :light_blue)
@@ -90,6 +90,9 @@ function main()
             else
                 Lib.print_error("command not found")
             end
+        else
+            #? clear the screen if user enters nothing and presses enter
+            print("\x1b[2J\x1b[H") 
         end
     end
 end

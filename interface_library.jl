@@ -5,6 +5,7 @@ module Lib
     export banner, generate_sql, take_input, print_error, border
 
     function banner(user)
+        print("\x1b[2J\x1b[H") #? clear the screen with starting the application
         printstyled("  ___                      _    _      _ _                     \n"; color = :cyan)
         printstyled(" / _ \\ _ __   ___ _ __    / \\  (_)_ __| (_)_ __   ___ ___    \n"; color = :cyan)
         printstyled("| | | | '_ \\ / _ | '_ \\  / _ \\ | | '__| | | '_ \\ / _ / __| \n"; color = :cyan)
