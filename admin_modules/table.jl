@@ -55,15 +55,14 @@ module Table
                  "   -"
             end
         
-            formatted_row = @sprintf("| %-25s | %-5s | %-7s | %-10s |", 
+            formattedRow = @sprintf("| %-25s | %-5s | %-7s | %-10s |", 
                 field, 
                 null, 
                 key, 
                 default
             )
         
-            printstyled(formatted_row, color = :light_cyan)
-            println("")  # New line after each row
+            printstyled("$formattedRow\n", color = :light_cyan)
         end
         Lib.draw_border([27,7,9,12])
     end
