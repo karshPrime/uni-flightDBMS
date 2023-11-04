@@ -2,6 +2,7 @@
 module Show
     using MySQL
     using DBInterface
+    using Dates
 
     include("COMMON.jl"); using .Common
     include("help.jl"); using .Help
@@ -40,6 +41,12 @@ module Show
     end
 
     function _add_space(text, count)
+        if text isa Dates.Time
+            text = Dates.format(text, "HH:MM:SS")
+        elseif text isa Dates.Date
+            text = Dates.format(text, "yyyy-mm-dd")
+        end
+
         while count > length(text)
             text = "$text "
         end
@@ -69,9 +76,9 @@ module Show
         "departure"       => (17, "Departure"),
         "destination"     => (17, "Destination"),
         "takeOffTime"     => (10, "Time"),
-        "takeOffDate"     => (10, "Date"),
+        "takeOffDate"     => (12, "Date"),
         "duration"        => (10, "Duration"),
-        "routeType"       => (12, "Route"),
+        "routeType"       => (15, "Route"),
         "hasVIP"          => (5,  "VIP"),
         "hasFood"         => (6,  "Food"),
         "nativeLanguage"  => (15, "Language")
