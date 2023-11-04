@@ -33,9 +33,9 @@ module Add
         if Common.decline() return 2; end
         
         columns = join(keys(data), ", ")
-        info = join(values(data), """ "," """)
+        info = join(values(data), "','")
         
-        sqlCmd = """INSERT INTO $table ($columns) VALUES ("$info");"""
+        sqlCmd = """INSERT INTO $table ($columns) VALUES ('$info');"""
         result = DBInterface.execute(connection, sqlCmd)
         _print_result(result, accessLvl)
     end
