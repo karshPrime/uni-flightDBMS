@@ -18,8 +18,8 @@ module Show
             "airstaff" => 10
         )
 
-        if haskey(tableIDs, userInput[1])
-            infoIndex = tableIDs[userInput[1]]
+        if haskey(tableIDs, userInput[2])
+            infoIndex = tableIDs[userInput[2]]
         else
             return 1
         end
