@@ -173,7 +173,8 @@ module Help
             ],
             [
                 (3, "search", "Look for a specific employee with their ID"),
-                (3, "department", "Look for all employees from a department")
+                (3, "department", "Look for all employees from a department"),
+                (3, "password", "Get a user's password.")
             ]
         )
 
