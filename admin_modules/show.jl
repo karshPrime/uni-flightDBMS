@@ -14,7 +14,7 @@ module Show
             "plane"    => 2,
             "pilot"    => 4,
             "crew"     => 6,
-            "light"    => 8,
+            "flight"   => 8,
             "airstaff" => 10
         )
 
@@ -25,11 +25,13 @@ module Show
         end
 
         sqlCmd = ""
-        for i in 1:length(userInput)
-            (perms, trigger, sql) = Help.showDetails[5][infoIndex][1:3]
-            if perms <= accessLvl
-                if userInput[i] == trigger
-                    sqlCmd = Lib.generate_sql(sqlCmd, sql, userInput[i + 1])
+        for i in 1:(length(userInput)-1)
+            for cmdRow in Help.showDetails[5][infoIndex]
+                (perms, trigger, sql) = cmdRow[1:3]
+                if perms <= accessLvl
+                    if userInput[i] == trigger
+                        sqlCmd = Lib.generate_sql(sqlCmd, sql, userInput[i + 1])
+                    end
                 end
             end
         end
