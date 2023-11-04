@@ -45,6 +45,8 @@ module Show
             text = Dates.format(text, "HH:MM:SS")
         elseif text isa Dates.Date
             text = Dates.format(text, "yyyy-mm-dd")
+        elseif text isa Missing
+            text = "N/A" 
         end
 
         while count > length(text)
