@@ -32,9 +32,8 @@ module Lib
             for j in 1:sections[i]
                 borderString *= "-"
             end
-            borderString *= "|"
+            borderString *= "+"
         end
-        borderString = borderString[1:end-1] * "+"
         printstyled("$borderString\n"; color = :yellow)
     end
 
