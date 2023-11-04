@@ -186,8 +186,8 @@ module Help
             ],
             [
                 (3, "on", "Actions performed on a specific date [yyyy-mm-dd]"),
-                (3, "time", "Actions executed at a specific time [hh:rr]"),
-                (3, "user", "logs of a certain employee"),
+                (3, "at", "Actions executed at a specific time [hh:rr]"),
+                (3, "by", "logs of a certain employee"),
                 (3, "action", "logs for a certain action"),
                 (3, "record", "logs for actions in a specific record")
             ]

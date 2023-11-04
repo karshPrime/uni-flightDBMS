@@ -43,7 +43,7 @@ function main()
         "remove" => Remove,
         "show"   => Show,
         "staff"  => Staff,
-        "Logs"   => Logs
+        "logs"   => Logs
     )
 
     accessID = Dict(
