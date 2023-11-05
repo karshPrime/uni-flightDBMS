@@ -55,6 +55,7 @@ function main()
 
     #* initialising variables
     (connection, username, accessLvl) = ("", "", "")
+    userid = ""
 
     while true #! user cannot continue without successful login
         (userid, userpass) = login()
@@ -86,7 +87,8 @@ function main()
             end
 
             if haskey(modules, userInput[1])
-                modules[userInput[1]].run(userInput, accessID[accessLvl], connection)
+                status = modules[userInput[1]].run(userInput, accessID[accessLvl], connection)
+                Auth.log(userid, status)
             else
                 Lib.print_error("command not found")
             end

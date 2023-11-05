@@ -109,8 +109,6 @@ module Show
         Lib.table_head(titles, titleSpace)
         Lib.draw_border(border)
 
-        #println(result)
-
         for data in result
             row = "|"
             for i in 1:length(data)
@@ -133,15 +131,18 @@ module Show
         view = Common.view(userInput[2], accessLvl)
         if view == 1 return 1; end
 
-        sqlCmd = _decode(userInput, accessLvl)
-        if sqlCmd == 1 return 1; end
+        conditions = _decode(userInput, accessLvl)
+        if conditions == 1 return 1; end
 
-        sqlCmd = "SELECT * FROM $view $sqlCmd ;"
+        sqlCmd = "SELECT * FROM $view $conditions ;"
 
         attributes = Common.execute(connection, "DESCRIBE $view;", accessLvl, true)
         (titles, titleSpace, border) = _title_details(attributes)
 
         result = Common.execute(connection, sqlCmd, accessLvl, false)
+        if result == 1 return 1; end
+
         _print_result(result, titles, titleSpace, border)
+        return ["View", view, conditions=="" ? "ALL" : replace(conditions[8:end], "'" => "")]
     end
 end

@@ -44,6 +44,8 @@ CREATE TABLE `Logs` (
     `time` TIME NOT NULL,
     `authorID` INT NOT NULL,
     `action` VARCHAR(30) NOT NULL,
+    `table` VARCHAR(10) NOT NULL,
+    `details` VARCHAR(30) NOT NULL,
     `record` VARCHAR(10) NOT NULL,
     PRIMARY KEY (`date`, `time`, `authorID`),
     FOREIGN KEY (`authorID`) REFERENCES `Profile`(`ID`)

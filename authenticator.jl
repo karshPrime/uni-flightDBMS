@@ -4,6 +4,7 @@
 module Auth
     using MySQL
     using DBInterface
+    using Dates
     
     _host = "172.17.0.2" #* host IP
 
@@ -102,15 +103,25 @@ module Auth
     end
 
     #? log actions in the log table
-    function log(authorID, action, record)
-        date = ""   #todo get today's date
-        time = ""   #todo get current time
-        command = """INSERT INTO `Logs` VALUES ('$date', '$time', '$authorID', '$action', '$record')"""
+    function log(authorID, status)
+        if status[1] == 1 return 0; end  # no action was taken
+        
+        record = length(status) > 3 ? status[4] : "flight_db"
+        (action, table, details) = status[1:3]
+
+        details = length(details) > 30 ? (details[1:26] * "...") : details
+        
+        date = Dates.format(Dates.now(), "yyyy-mm-dd")
+        time = Dates.format(Dates.Time(Dates.now()), "HH:MM:SS")
+
+        command = """ INSERT INTO `Logs` VALUES 
+            ('$date', '$time', '$authorID', '$action', '$table', "$details", '$record')
+        """
+        println(command)
 
         appConnect = _connect_as_app()
         DBInterface.execute(appConnect, command)
-
-        DBInterface.close!
+        DBInterface.close(appConnect)
     end
 
     #? connect to the database as public user

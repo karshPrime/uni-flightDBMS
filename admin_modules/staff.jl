@@ -70,8 +70,11 @@ module Staff
             $(password[passCondition][2]) $conditions ;
         """ 
         result = Common.execute(connection, sqlCmd, accessLvl, false)
+        if result == 1 return 1; end
 
         _print_result(result, passCondition==2)
         Common.flip_exec_db(false, connection) # switch back to flight_db
+
+        return ["staff", "View", "View"]
     end
 end

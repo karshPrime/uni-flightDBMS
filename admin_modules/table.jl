@@ -88,7 +88,9 @@ module Table
     function run(userInput, accessLvl, connection)
         tableTitles = _decode(userInput, accessLvl)
 
-        if tableTitles[1] == 1 return 1; end;
+        if tableTitles[1] == 1 return 1; end
+
+        tableLog = length(tableTitles) > 1 ? "-All-" : tableTitles[1]
 
         if userInput[2] == "count"
             for title in tableTitles
@@ -96,12 +98,11 @@ module Table
                 result = Common.execute(connection, fullCmd, accessLvl, true)
                 _print_result_count(result, _table_name(title))
             end
-
         elseif userInput[2] == "about"
             for title in tableTitles
                 fullCmd = "DESCRIBE " * title
                 result = Common.execute(connection, fullCmd, accessLvl, true)
-                
+
                 #? print table name only when multiple tables are printed; otherwise redundant
                 if length(tableTitles) > 1 
                     printstyled("\n$(_table_name(title))\n"; color = :light_yellow)
@@ -112,7 +113,8 @@ module Table
         else
             Lib.print_error("invalid parameters")
             Lib.print_error("""type "? table" for more information.""")
-            return
+            return 1
         end
+        return ["Table", tableLog, userInput[2]]
     end
 end

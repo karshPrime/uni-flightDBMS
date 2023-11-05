@@ -32,11 +32,11 @@ module Edit
             end
         end
 
-        if Common.decline() return 2; end
+        if Common.decline() return 1; end
 
         sqlCmd = "UPDATE $table SET $(conditions[3:end]) WHERE $primaryKey = $id ;"
         result = Common.execute(connection, sqlCmd, accessLvl, false)
-        
-        _print_result(result, accessLvl)
+
+        return result == 1 ? 1 : ["Edit",table,"FOR ID=$id"]
     end
 end
