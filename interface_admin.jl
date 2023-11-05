@@ -18,11 +18,6 @@ using Printf
 
 #? login prompt
 function login()
-    #return ("101","sunshine2023") #! debug HELPDESK
-    #return ("103", "secret1234")  #! debug ASSOCIATE
-    #return ("109","happyDays42")  #! debug MANAGER
-    return ("105","soccerFan#1")  #! debug EXECUTIVE
-    
     printstyled("\nUser ID  > "; color = :green)
     userid = readline()
     printstyled("Password > "; color = :red)

@@ -117,7 +117,6 @@ module Auth
         command = """ INSERT INTO `Logs` VALUES 
             ('$date', '$time', '$authorID', '$action', '$table', "$details", '$record')
         """
-        println(command)
 
         appConnect = _connect_as_app()
         DBInterface.execute(appConnect, command)
