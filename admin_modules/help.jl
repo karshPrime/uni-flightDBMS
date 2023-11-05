@@ -1,5 +1,7 @@
 #? all functions for Help command
 module Help
+    include("COMMON.jl"); using .Common
+    
     export run, showDetails
 
     #? beautify help dialogue
@@ -89,29 +91,38 @@ module Help
     )
 
     #? narrowed down _syntax update for show command
-    function _syntax_show(accessLvl)
+    function _syntax_show(accessLvl, toPrint)
         _syntax(showDetails[1:4], accessLvl)
-
+    
         for i in 1:2:length(showDetails[5])
             table = showDetails[5][i]
+            if toPrint != "all" && table != toPrint
+                continue
+            end
+    
             printstyled("Options for $table table:\n"; color = :yellow)
-            for (allowed,cmdName, ~, info) in showDetails[5][i+1]
-                if allowed <= accessLvl
-                    print("  $cmdName")
-                    for i in length(cmdName):10
-                        print(" ")
-                    end
-                    printstyled(" $info\n"; color = :light_cyan)
+            for (allowed, cmdName, ~, info) in showDetails[5][i+1]
+                if allowed > accessLvl
+                    continue
                 end
+                
+                print("  $cmdName")
+                for i in length(cmdName):10
+                    print(" ")
+                end
+
+                printstyled(" $info\n"; color = :light_cyan)
             end
             println("")
         end
-        printstyled("Note: "; color = :yellow)
-        println(showDetails[6])
+        if toPrint == "all"
+            printstyled("Note: "; color = :yellow)
+            println(showDetails[6])
+        end 
     end
 
     #? print help menu showing all possible commands for the loggedin user
-    function run(accessLvl, option)
+    function run(accessLvl, userInput)
         #* helpdesk = 0 | associate = 1 | manager = 2 | executive = 3
         helpDetails = (
             0, "?", "{OPTION}", 
@@ -204,12 +215,20 @@ module Help
             "logs"   => logsDetails
         )
 
-        if haskey(option_map, option)
-            if option == "show"
-                _syntax_show(accessLvl)
-            else
-                _syntax(option_map[option], accessLvl)
+        option = length(userInput) > 1 ? userInput[2] : " "
+
+        if option == "show"
+            table = "all"
+
+            if length(userInput) > 2
+                table = Common.table(userInput[3])
+                if table == 1 return 1; end;
             end
+            _syntax_show(accessLvl, table)
+
+        elseif haskey(option_map, option)
+            _syntax(option_map[option], accessLvl)
+
         else
             #* same as help without args
             _syntax(helpDetails, accessLvl)

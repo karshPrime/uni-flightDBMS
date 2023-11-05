@@ -81,7 +81,7 @@ function main()
             end
 
             if userInput[1] == "?" #* help
-                Help.run(accessID[accessLvl], length(userInput) > 1 ? userInput[2] : " ")
+                Help.run(accessID[accessLvl], userInput)
                 continue
             end
 
