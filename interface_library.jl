@@ -54,7 +54,7 @@ module Lib
     #? return user input as word array
     function take_input(identify)
         printstyled("\n$identify "; color = :blue)
-        userInput = lowercase(readline())
+        userInput = lowercase(chomp(readline()))
 
         #? custom split command to have multiworded cities like 'New York' as one element
         inQuotes = false
