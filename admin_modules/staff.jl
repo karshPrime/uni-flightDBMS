@@ -169,11 +169,11 @@ module Staff
             if result == 1 return 1; end
 
             sqlCmd = "DELETE FROM Profile WHERE ID = $id;"
-            result = Common.execute(connection, sqlCmd, accessLvl, false)'
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
             if result == 1 return 1; end
 
             conditions = "FOR ID=$id"
-            
+
         else
             action = "View"
 
@@ -194,6 +194,6 @@ module Staff
         end
         Common.flip_exec_db(false, connection) # switch back to flight_db
 
-        return ["staff", action, conditions]
+        return [action, "staff", conditions, "control_db"]
     end
 end
