@@ -125,15 +125,45 @@ module Common
     function execute(connection, command, accessLvl, fetch)
         try
             result = DBInterface.execute(connection, command)
-            
+           
             if fetch 
                 return DBInterface.fetch(result)
             end
 
             return result
-            
+
         catch e
-            println("An error occurred: ", e)
+            if occursin("`crewID`", e.msg)
+                Lib.print_error("Invalid Crew ID")
+            
+            elseif occursin("`pilotID`", e.msg)
+                Lib.print_error("Invalid Pilot ID")
+            
+            elseif occursin("`planeID`", e.msg)
+                Lib.print_error("Invalid Plane ID")
+
+            elseif occursin("command denied", e.msg)
+                match = match(r"'(.*?)'", e.msg)  # extract table name from the error message
+                tableName = match !== nothing ? match[1] : "unknown table"
+                
+                commandDenied = occursin("INSERT", e.msg) ? "INSERT" : (occursin("UPDATE", e.msg) ? "UPDATE" : "unknown operation")
+                
+                Lib.print_error("You don't have permissions to $commandDenied into '$tableName' table")
+                
+            else
+                Lib.print_error("An error occurred.")
+            
+                printstyled(
+                    "Please check syntax for your input and make sure all keys are valid\n";
+                     color = :light_red
+                )
+                
+                #* show exact error only if user is executive
+                if accessLvl == 3
+                    printstyled("$e\n"; color = :light_red)
+                end
+            end
         end
+        return 1
     end
 end
