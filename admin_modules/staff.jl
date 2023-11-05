@@ -105,6 +105,53 @@ module Staff
             result = Common.execute(connection, sqlCmd, accessLvl, false)
             if result == 1 return 1; end
 
+        elseif length(userInput) > 1 && userInput[2] == "edit"
+            action = "Edit"
+            printstyled("Enter Employee ID you want to edit: "; color = :yellow)
+            id = chomp(readline())
+            printstyled("Enter == to leave the field unchanged\n"; color = :red)
+
+            prompts = ["Name","Surname","Gender","Phone","AccessLvl","Password"]
+            attributes = ["fName","lName","gender","phone","accessLvl","password"]
+            values = Dict()
+
+            for i in 1:length(prompts)
+                printstyled("> $(prompts[i]) : "; color = :yellow)
+                data = chomp(readline())
+                if data in ["==", ""] continue; end
+
+                values[attributes[i]] = data
+            end
+
+            if Common.decline() return 1; end
+
+            sqlProfile = "UPDATE Profile SET "
+            updateProfile = false
+            for key in keys(values)
+                if key in ["fName","lName","gender","phone"]
+                    sqlProfile *= "$key = '$(values[key])', "
+                    updateProfile = true
+                end
+            end
+            sqlProfile = sqlProfile[1:end-2] * " WHERE ID=$id"
+            if updateProfile
+                result = Common.execute(connection, sqlProfile, accessLvl, false)
+                if result == 1 return 1; end
+            end
+
+            if "accessLvl" in keys(values)
+                sqlCmd = "UPDATE Access SET accessLvl = '$(values["accessLvl"])' WHERE ID = $id ;"
+                result = Common.execute(connection, sqlCmd, accessLvl, false)
+                if result == 1 return 1; end
+            end
+
+            if "password" in keys(values)
+                sqlCmd = "UPDATE Authentication SET password = '$(values["password"])' WHERE ID = $id ;"
+                result = Common.execute(connection, sqlCmd, accessLvl, false)
+                if result == 1 return 1; end
+            end
+
+            conditions = "FOR ID=$id"
 
         elseif length(userInput) > 1 && userInput[2] == "remove"
             action = "Remove"
