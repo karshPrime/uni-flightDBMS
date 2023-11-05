@@ -37,7 +37,7 @@ function help_menu()
     7. `planes` : Show the list of all planes.
        Example: `planes`
     
-    8. `plane {id}`: Show details of a specific plane by its ID.
+    8. `planes {id}`: Show details of a specific plane by its ID.
        Example: `plane 123`
 
     
@@ -149,7 +149,8 @@ function main()
 
         if length(userInput) > 0
             if userInput[1] == "x"
-                printstyled("Goodbye~\n"; color = :light_blue)
+                printstyled("Goodbye~\n\n"; color = :light_blue)
+                DBInterface.close!
                 break
             end
 
