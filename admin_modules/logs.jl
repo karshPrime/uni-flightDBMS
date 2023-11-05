@@ -28,14 +28,14 @@ module Logs
 
     #? display formatted result
     function _print_result(result)
-        Lib.draw_border([12,10,10,8,7,31,12])
+        Lib.draw_border([12,10,10,8,8,31,12])
         Lib.table_head(
-            ["Date","Time","Author","Action","Table","Details","Record"],
-            [9,7,7,5,4,28,9]
+            ["Date","Time","Author","Action","Target","Details","Record"],
+            [9,7,7,5,5,28,9]
         )
-        Lib.draw_border([12,10,10,8,7,31,12])
+        Lib.draw_border([12,10,10,8,8,31,12])
         for row in result
-            formattedRow = @sprintf("| %-10s | %-8s | %-8s | %-6s | %-5s | %-29s | %-10s |", 
+            formattedRow = @sprintf("| %-10s | %-8s | %-8s | %-6s | %-6s | %-29s | %-10s |", 
                 row[:date],
                 row[:time],
                 row[:authorID],
@@ -46,7 +46,7 @@ module Logs
             )
             printstyled("$formattedRow\n", color = :light_cyan)
         end
-        Lib.draw_border([12,10,10,8,7,31,12])
+        Lib.draw_border([12,10,10,8,8,31,12])
     end
 
     #? command run
