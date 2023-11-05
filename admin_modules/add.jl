@@ -12,8 +12,6 @@ module Add
         attributes = Common.execute(connection, "DESCRIBE $table;", accessLvl, true)
         
         data = Dict{String, String}()
-
-        id = ""
         
         for column in attributes
             columnName = column[:Field]
@@ -22,12 +20,7 @@ module Add
             if columnName == "staffCount" continue; end
 
             printstyled("> $columnName : "; color = :yellow)
-            value = chomp(readline())
-            data[columnName] = value
-
-            if columnName == "ID"
-                id = value
-            end
+            data[columnName] = chomp(readline())
         end
 
         if Common.decline() return 1; end
@@ -38,6 +31,6 @@ module Add
         sqlCmd = """INSERT INTO $table ($columns) VALUES ('$info');"""
         result = Common.execute(connection, sqlCmd, accessLvl, false)
 
-        return result == 1 ? 1 : ["Add", table, "FOR ID=$id"]
+        return result == 1 ? 1 : ["Add", table, "FOR ID=$(data["ID"])"]
     end
 end
