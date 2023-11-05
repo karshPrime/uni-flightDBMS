@@ -61,20 +61,72 @@ module Staff
         if accessLvl != 3 return; end
         Common.flip_exec_db(true, connection)
 
-        password = (("", ""), ("AU.password, ", "JOIN Authentication AS AU ON P.ID = AU.ID"))
+        conditions = ""
+        if length(userInput) > 1 && userInput[2] == "add"
+            action = "Add"
 
-        (passCondition, conditions) = _decode(userInput)
+            prompts = Dict(
+                "ID"     => "",
+                "Name"  => "",
+                "Surname"  => "",
+                "Gender" => "",
+                "Phone"  => "",
+                "AccessLvl" => "",
+                "Password"  => "",
+            )
 
-        sqlCmd = """SELECT  P.ID, A.accessLvl, $(password[passCondition][1]) P.fName, P.lName, P.gender, P.phone
-            FROM Profile AS P JOIN Access AS A ON P.ID = A.ID
-            $(password[passCondition][2]) $conditions ;
-        """ 
-        result = Common.execute(connection, sqlCmd, accessLvl, false)
-        if result == 1 return 1; end
+            for field in ["ID","Name","Surname","Gender","Phone","AccessLvl","Password"]
+                printstyled("> $field : "; color = :yellow)
+                prompts[field] = chomp(readline())
+            end
 
-        _print_result(result, passCondition==2)
+            if Common.decline() return 1; end
+            
+            conditions = "FOR ID=$(prompts["ID"])"
+
+            sqlCmd = """
+                INSERT INTO Profile VALUES 
+                ('$(prompts["ID"])','$(prompts["Name"])','$(prompts["Surname"])','$(prompts["Gender"])','$(prompts["Phone"])');
+            """
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+            sqlCmd = """
+                INSERT INTO Access VALUES 
+                ('$(prompts["ID"])','$(prompts["AccessLvl"])');
+            """
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+            sqlCmd = """
+                INSERT INTO Authentication VALUES 
+                ('$(prompts["ID"])','$(prompts["Password"])');
+            """
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+
+
+        else
+            action = "View"
+
+            password = (("", ""), ("AU.password, ", "JOIN Authentication AS AU ON P.ID = AU.ID"))
+
+            (passCondition, conditions) = _decode(userInput)
+
+            sqlCmd = """SELECT  P.ID, A.accessLvl, $(password[passCondition][1]) P.fName, P.lName, P.gender, P.phone
+                FROM Profile AS P JOIN Access AS A ON P.ID = A.ID
+                $(password[passCondition][2]) $conditions ;
+            """ 
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+            conditions = conditions == "" ? "ALL" : conditions
+
+            _print_result(result, passCondition==2)
+        end
         Common.flip_exec_db(false, connection) # switch back to flight_db
 
-        return ["staff", "View", "View"]
+        return ["staff", action, conditions]
     end
 end
