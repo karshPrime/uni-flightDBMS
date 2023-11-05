@@ -1,14 +1,7 @@
 #? all functions for Remove command : MySQL's DELETE command
 module Remove
-    using MySQL
-    using DBInterface
-    
     include("COMMON.jl"); using .Common
     export run
-
-    function _print_result(data, access)
-        #TODO error handle prompt
-    end
 
     #? command run
     function run(userInput, accessLvl, connection)
@@ -23,8 +16,6 @@ module Remove
 
         sqlCmd = "DELETE FROM $table WHERE $primaryKey = $id;"
 
-        action = DBInterface.execute(connection, sqlCmd)
-
-        _print_result(action, accessLvl)
+        action = Common.execute(connection, sqlCmd, accessLvl, false)
     end
 end

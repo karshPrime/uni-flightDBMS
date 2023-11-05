@@ -4,7 +4,7 @@ module Common
     using DBInterface
     
     include("../interface_library.jl"); using .Lib
-    export table, view, all_views, enter_a_table, primary_key, confirm, flip_exec_db
+    export table, view, all_views, enter_a_table, primary_key, confirm, flip_exec_db, execute
 
     #? table names
     tableNames = Dict(
@@ -118,6 +118,22 @@ module Common
         else
             DBInterface.execute(connection, "SET ROLE rManager;");
             DBInterface.execute(connection, "USE flight_db;");
+        end
+    end
+
+    #? executes commands and handle errors
+    function execute(connection, command, accessLvl, fetch)
+        try
+            result = DBInterface.execute(connection, command)
+            
+            if fetch 
+                return DBInterface.fetch(result)
+            end
+
+            return result
+            
+        catch e
+            println("An error occurred: ", e)
         end
     end
 end

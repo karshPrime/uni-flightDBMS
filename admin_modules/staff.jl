@@ -1,11 +1,9 @@
 #? all functions for Staff management
 module Staff
-    using MySQL
-    using DBInterface
     using Printf
-
     include("../interface_library.jl"); using .Lib
     include("COMMON.jl"); using .Common
+
     export run
 
     #? understand user input and generate corresponding sql
@@ -71,7 +69,7 @@ module Staff
             FROM Profile AS P JOIN Access AS A ON P.ID = A.ID
             $(password[passCondition][2]) $conditions ;
         """ 
-        result = DBInterface.execute(connection, sqlCmd)
+        result = Common.execute(connection, sqlCmd, accessLvl, false)
 
         _print_result(result, passCondition==2)
         Common.flip_exec_db(false, connection) # switch back to flight_db

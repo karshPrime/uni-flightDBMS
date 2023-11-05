@@ -1,22 +1,15 @@
 #? all functions for Add command : MySQL's INSERT command
 module Add
-    using MySQL
-    using DBInterface
-
     include("COMMON.jl"); using .Common
     
     export run
-
-    function _print_result(data, access)
-        #TODO error handling
-    end
 
     #? command run
     function run(userInput, accessLvl, connection)
         table = Common.enter_a_table(userInput, "add", "to")
         if table == 1 return 1; end
 
-        attributes = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
+        attributes = Common.execute(connection, "DESCRIBE $table;", accessLvl, true)
         
         data = Dict{String, String}()
         
@@ -37,7 +30,6 @@ module Add
         info = join(values(data), "','")
         
         sqlCmd = """INSERT INTO $table ($columns) VALUES ('$info');"""
-        result = DBInterface.execute(connection, sqlCmd)
-        _print_result(result, accessLvl)
+        result = Common.execute(connection, sqlCmd, accessLvl, false)
     end
 end

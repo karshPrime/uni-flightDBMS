@@ -1,9 +1,6 @@
 #? all functions for Table command : MySQL's DESCRIBE TABLE command + count
 module Table
-    using MySQL
-    using DBInterface
-    using Printf
-    
+    using Printf    
     include("COMMON.jl"); using .Common
     include("../interface_library.jl"); using .Lib
     
@@ -96,14 +93,14 @@ module Table
         if userInput[2] == "count"
             for title in tableTitles
                 fullCmd = "SELECT COUNT(*) FROM " * title
-                result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
+                result = Common.execute(connection, fullCmd, accessLvl, true)
                 _print_result_count(result, _table_name(title))
             end
 
         elseif userInput[2] == "about"
             for title in tableTitles
                 fullCmd = "DESCRIBE " * title
-                result = DBInterface.fetch(DBInterface.execute(connection, fullCmd))
+                result = Common.execute(connection, fullCmd, accessLvl, true)
                 
                 #? print table name only when multiple tables are printed; otherwise redundant
                 if length(tableTitles) > 1 

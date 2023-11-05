@@ -1,7 +1,5 @@
 #? all functions for Show command : MySQL's SELECT command
 module Show
-    using MySQL
-    using DBInterface
     using Dates
 
     include("COMMON.jl"); using .Common
@@ -140,10 +138,10 @@ module Show
 
         sqlCmd = "SELECT * FROM $view $sqlCmd ;"
 
-        attributes = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $view;"))
+        attributes = Common.execute(connection, "DESCRIBE $view;", accessLvl, true)
         (titles, titleSpace, border) = _title_details(attributes)
 
-        result = DBInterface.execute(connection, sqlCmd)
+        result = Common.execute(connection, sqlCmd, accessLvl, false)
         _print_result(result, titles, titleSpace, border)
     end
 end

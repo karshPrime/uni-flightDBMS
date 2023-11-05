@@ -1,14 +1,7 @@
 #? all functions for Edit command : MySQL's UDPATE command
 module Edit
-    using MySQL
-    using DBInterface
-
     include("COMMON.jl"); using .Common
     export run
-
-    function _print_result(data, access)
-        #TODO error handle prompt
-    end
 
     #? command run
     function run(userInput, accessLvl, connection)
@@ -42,7 +35,7 @@ module Edit
         if Common.decline() return 2; end
 
         sqlCmd = "UPDATE $table SET $(conditions[3:end]) WHERE $primaryKey = $id ;"
-        result = DBInterface.execute(connection, sqlCmd)
+        result = Common.execute(connection, sqlCmd, accessLvl, false)
         
         _print_result(result, accessLvl)
     end
