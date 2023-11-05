@@ -12,7 +12,7 @@ module Remove
         printstyled("Enter $primaryKey for entry you wish to delete: "; color = :yellow)
         id = chomp(readline())
         
-        if Common.decline() return 2; end
+        if Common.decline() return 1; end
 
         sqlCmd = "DELETE FROM $table WHERE $primaryKey = $id;"
 
