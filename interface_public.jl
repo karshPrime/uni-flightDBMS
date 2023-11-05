@@ -165,6 +165,9 @@ function main()
             else
                 run_cmd(sqlCmd, connection, userInput[1]=="flights")
             end
+        else
+            #? clear the screen if user enters nothing and presses enter
+            print("\x1b[2J\x1b[H") 
         end
     end
 end
