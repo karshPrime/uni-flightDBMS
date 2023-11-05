@@ -61,19 +61,19 @@ module Staff
         if accessLvl != 3 return; end
         Common.flip_exec_db(true, connection)
 
+        prompts = Dict(
+            "ID"     => "",
+            "Name"  => "",
+            "Surname"  => "",
+            "Gender" => "",
+            "Phone"  => "",
+            "AccessLvl" => "",
+            "Password"  => "",
+        )
+
         conditions = ""
         if length(userInput) > 1 && userInput[2] == "add"
             action = "Add"
-
-            prompts = Dict(
-                "ID"     => "",
-                "Name"  => "",
-                "Surname"  => "",
-                "Gender" => "",
-                "Phone"  => "",
-                "AccessLvl" => "",
-                "Password"  => "",
-            )
 
             for field in ["ID","Name","Surname","Gender","Phone","AccessLvl","Password"]
                 printstyled("> $field : "; color = :yellow)
@@ -106,7 +106,27 @@ module Staff
             if result == 1 return 1; end
 
 
+        elseif length(userInput) > 1 && userInput[2] == "remove"
+            action = "Remove"
+            printstyled("Enter Emplyee ID to delete: "; color = :yellow)
+            id = chomp(readline())
 
+            if Common.decline() return 2; end
+            
+            sqlCmd = "DELETE FROM Authentication WHERE ID = $id;"
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+            sqlCmd = "DELETE FROM Access WHERE ID = $id;"
+            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            if result == 1 return 1; end
+
+            sqlCmd = "DELETE FROM Profile WHERE ID = $id;"
+            result = Common.execute(connection, sqlCmd, accessLvl, false)'
+            if result == 1 return 1; end
+
+            conditions = "FOR ID=$id"
+            
         else
             action = "View"
 
