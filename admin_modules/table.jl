@@ -9,6 +9,7 @@ module Table
     
     export run
 
+    #? understand user input and return corresponding sql
     function _decode(rawInput, accessLvl)
         flightTables = ["AirStaff","Crew","Flight","Pilot","Plane"]
         cmds = []
@@ -32,6 +33,7 @@ module Table
         return cmds
     end
 
+    #? display function for about option
     function _print_result_about(data)
         Lib.draw_border([27,7,9,12])
         Lib.table_head(["Field","Null","Key","Default"],[24,4,6,9])
@@ -67,6 +69,7 @@ module Table
         Lib.draw_border([27,7,9,12])
     end
 
+    #? print function for count option
     function _print_result_count(data, tableName)
         for row in data
             printstyled("Count of $tableName Entries: "; color = :yellow)
@@ -75,6 +78,7 @@ module Table
         end
     end
 
+    #? table name from view name
     function _table_name(title)
         if title in ["HFlight","HPilot","HPlane","ACrew","AFlight","AAirStaff"]
             return title[2:end]
@@ -83,6 +87,7 @@ module Table
         return title
     end
 
+    #? command run
     function run(userInput, accessLvl, connection)
         tableTitles = _decode(userInput, accessLvl)
 

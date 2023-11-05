@@ -6,6 +6,7 @@ module Common
     include("../interface_library.jl"); using .Lib
     export table, view, all_views, enter_a_table, primary_key, confirm, flip_exec_db
 
+    #? table names
     tableNames = Dict(
         "plane"    => "Plane",
         "pilot"    => "Pilot",
@@ -14,18 +15,21 @@ module Common
         "airstaff" => "AirStaff"
     )
 
+    #? view names for helpdesk
     helpdeskView = Dict(
         "plane"    => "HPlane",
         "pilot"    => "HPilot",
         "flight"   => "HFlight"
     )
 
+    #? view names for associates
     associateView = Dict(
         "crew"     => "ACrew",
         "flight"   => "AFlight",
         "airstaff" => "AAirStaff",
     )
 
+    #? defines views for different roles/accessLvl
     users = Dict(
         0 => helpdeskView,
         1 => associateView,
@@ -33,6 +37,7 @@ module Common
         3 => tableNames  # and so does the executive
     )
 
+    #? returns exact table name from user input
     function table(title)
         if haskey(tableNames, title)
             return tableNames[title]
@@ -43,6 +48,7 @@ module Common
         return 1
     end
 
+    #? returns exact view name for the specified role/accessLvl
     function view(tableTitle, accessLvl) 
         if haskey(users[accessLvl], tableTitle)
             return users[accessLvl][tableTitle]
@@ -55,6 +61,7 @@ module Common
         return 1
     end
 
+    #? returns all views for the specified role/accessLvl
     function all_views(accessLvl)
         allViews = []
 
@@ -69,6 +76,7 @@ module Common
         return allViews
     end
 
+    #? checks user input for table name
     function enter_a_table(userInput, action, prepositions)
         if length(userInput) == 1
             Lib.print_error("Please specify table to $action data $prepositions.")
@@ -79,6 +87,7 @@ module Common
         return table(userInput[2])
     end
 
+    #? returns primary key of a table
     function primary_key(table, connection)
         tableInfo = DBInterface.fetch(DBInterface.execute(connection, "DESCRIBE $table;"))
 
@@ -93,6 +102,7 @@ module Common
         return (tableInfo, primaryKey)
     end
 
+    #? asks user for confirmation before executing their request
     function decline()
         printstyled("<!> Confirm Changes [Y/n] : "; color = :red)
         confirm = lowercase(chomp(readline()))
@@ -100,6 +110,7 @@ module Common
         return confirm == "n"
     end
 
+    #? flips database for executive when required
     function flip_exec_db(control, connection)
         if control
             DBInterface.execute(connection, "SET ROLE rExecutive;");

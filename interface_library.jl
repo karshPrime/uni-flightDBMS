@@ -4,6 +4,7 @@
 module Lib
     export banner, generate_sql, take_input, print_error, border
 
+    #? program banner for the interfaces
     function banner(user)
         print("\x1b[2J\x1b[H") #? clear the screen with starting the application
         printstyled("  ___                      _    _      _ _                     \n"; color = :cyan)
@@ -84,6 +85,7 @@ module Lib
         return result
     end
     
+    #? prints prompt as error
     function print_error(prompt)
         printstyled("\n<!> $prompt <!>\n"; color = :red)
     end

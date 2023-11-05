@@ -8,6 +8,7 @@ module Staff
     include("COMMON.jl"); using .Common
     export run
 
+    #? understand user input and generate corresponding sql
     function _decode(userInput)
         options = Dict(
             "search"     => "P.ID",
@@ -30,6 +31,7 @@ module Staff
         return (showPass, conditions)
     end
 
+    #? display formatted result
     function _print_result(result, showPass)
         Lib.draw_border([5,20,11,15,15,8,11])
         Lib.table_head(
@@ -56,6 +58,7 @@ module Staff
         Lib.draw_border([5,20,11,15,15,8,11])
     end
 
+    #? command run
     function run(userInput, accessLvl, connection)
         if accessLvl != 3 return; end
         Common.flip_exec_db(true, connection)

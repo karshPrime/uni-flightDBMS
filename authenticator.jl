@@ -101,6 +101,7 @@ module Auth
         return "ERROR" # will break the interface program
     end
 
+    #? log actions in the log table
     function log(authorID, action, record)
         date = ""   #todo get today's date
         time = ""   #todo get current time
@@ -112,6 +113,7 @@ module Auth
         DBInterface.close!
     end
 
+    #? connect to the database as public user
     function public()
         publicConnect = DBInterface.connect(MySQL.Connection, 
             _host, 

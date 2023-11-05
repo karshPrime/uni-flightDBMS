@@ -10,6 +10,7 @@ module Show
 
     export run
 
+    #? understand user input and generate corresponding sql
     function _decode(userInput, accessLvl)
         tableIDs = Dict(
             "plane"    => 2,
@@ -40,6 +41,7 @@ module Show
         return sqlCmd
     end
 
+    #? add spaces to the text making it of same len
     function _add_space(text, count)
         if text isa Dates.Time
             text = Dates.format(text, "HH:MM:SS")
@@ -56,6 +58,7 @@ module Show
         return " $text |"
     end
 
+    #? spaces and heading for attributes
     _nameSpace = Dict(
         "ID"              => (9,  "ID"),
         "airlines"        => (20, "Airlines"),
@@ -86,6 +89,7 @@ module Show
         "nativeLanguage"  => (15, "Language")
     )
 
+    #? get all columums from the raw attributes result
     function _title_details(attributes)
         titles = []
         titleSpace = []
@@ -101,6 +105,7 @@ module Show
         return (titles, titleSpace, border)
     end
 
+    #? display formatted result
     function _print_result(result, titles, titleSpace, border)
         Lib.draw_border(border)
         Lib.table_head(titles, titleSpace)
@@ -119,6 +124,7 @@ module Show
         Lib.draw_border(border)
     end
 
+    #? command run
     function run(userInput, accessLvl, connection)
         if length(userInput) == 1
             Lib.print_error("Please specify table to select data from.")

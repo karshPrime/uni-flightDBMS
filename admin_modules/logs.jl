@@ -7,6 +7,7 @@ module Logs
     include("COMMON.jl"); using .Common
     export run
 
+    #? understand user input and generate corresponding sql
     function _decode(userInput)
         options = Dict(
             "on"     => "date",
@@ -26,10 +27,12 @@ module Logs
         return conditions
     end
 
+    #? display formatted result
     function _print_result(result)
         #
     end
 
+    #? command run
     function run(userInput, accessLvl, connection)
         if accessLvl != 3 return; end
         flip_exec_db(true, connection) # switch to control_db

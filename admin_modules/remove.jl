@@ -10,6 +10,7 @@ module Remove
         #TODO error handle prompt
     end
 
+    #? command run
     function run(userInput, accessLvl, connection)
         table = Common.enter_a_table(userInput, "remove", "from")
         if table == 1 return 1; end
