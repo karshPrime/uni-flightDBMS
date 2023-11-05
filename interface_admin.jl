@@ -70,7 +70,7 @@ function main()
     end
 
     while true
-        userInput = Lib.take_input("[$username | $accessLvl] \$") #* [Bob Dayne | Manager] $ 
+        userInput = Lib.take_input("$accessLvl : $(lowercase(username)) ➤ ") #* [Bob Dayne | Manager] $ 
 
         if length(userInput) > 0
             if userInput[1] == "x" #* quit
