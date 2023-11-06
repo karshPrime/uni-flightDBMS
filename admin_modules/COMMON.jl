@@ -124,8 +124,7 @@ module Common
     #? executes commands and handle errors
     function execute(connection, command, accessLvl)
         try
-            result = DBInterface.execute(connection, command)
-            return result
+            return DBInterface.execute(connection, command) 
         catch e
             if occursin("`crewID`", e.msg)
                 Lib.print_error("Invalid Crew ID")
