@@ -95,13 +95,13 @@ module Table
         if userInput[2] == "count"
             for title in tableTitles
                 fullCmd = "SELECT COUNT(*) FROM " * title
-                result = Common.execute(connection, fullCmd, accessLvl, true)
+                result = Common.execute(connection, fullCmd, accessLvl)
                 _print_result_count(result, _table_name(title))
             end
         elseif userInput[2] == "about"
             for title in tableTitles
                 fullCmd = "DESCRIBE " * title
-                result = Common.execute(connection, fullCmd, accessLvl, true)
+                result = Common.execute(connection, fullCmd, accessLvl)
 
                 #? print table name only when multiple tables are printed; otherwise redundant
                 if length(tableTitles) > 1 

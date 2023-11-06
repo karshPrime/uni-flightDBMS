@@ -57,7 +57,7 @@ module Logs
         conditions = _decode(userInput)
 
         sqlCmd = "SELECT * FROM Logs $conditions ;"
-        result = Common.execute(connection, sqlCmd, accessLvl, true)
+        result = Common.execute(connection, sqlCmd, accessLvl)
         if result == 1 return 1; end
         
         _print_result(result)

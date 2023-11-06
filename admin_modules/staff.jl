@@ -88,21 +88,21 @@ module Staff
                 INSERT INTO Profile VALUES 
                 ('$(prompts["ID"])','$(prompts["Name"])','$(prompts["Surname"])','$(prompts["Gender"])','$(prompts["Phone"])');
             """
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             sqlCmd = """
                 INSERT INTO Access VALUES 
                 ('$(prompts["ID"])','$(prompts["AccessLvl"])');
             """
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             sqlCmd = """
                 INSERT INTO Authentication VALUES 
                 ('$(prompts["ID"])','$(prompts["Password"])');
             """
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
         elseif length(userInput) > 1 && userInput[2] == "edit"
@@ -135,19 +135,19 @@ module Staff
             end
             sqlProfile = sqlProfile[1:end-2] * " WHERE ID=$id"
             if updateProfile
-                result = Common.execute(connection, sqlProfile, accessLvl, false)
+                result = Common.execute(connection, sqlProfile, accessLvl)
                 if result == 1 return 1; end
             end
 
             if "accessLvl" in keys(values)
                 sqlCmd = "UPDATE Access SET accessLvl = '$(values["accessLvl"])' WHERE ID = $id ;"
-                result = Common.execute(connection, sqlCmd, accessLvl, false)
+                result = Common.execute(connection, sqlCmd, accessLvl)
                 if result == 1 return 1; end
             end
 
             if "password" in keys(values)
                 sqlCmd = "UPDATE Authentication SET password = '$(values["password"])' WHERE ID = $id ;"
-                result = Common.execute(connection, sqlCmd, accessLvl, false)
+                result = Common.execute(connection, sqlCmd, accessLvl)
                 if result == 1 return 1; end
             end
 
@@ -161,15 +161,15 @@ module Staff
             if Common.decline() return 2; end
             
             sqlCmd = "DELETE FROM Authentication WHERE ID = $id;"
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             sqlCmd = "DELETE FROM Access WHERE ID = $id;"
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             sqlCmd = "DELETE FROM Profile WHERE ID = $id;"
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             conditions = "FOR ID=$id"
@@ -185,7 +185,7 @@ module Staff
                 FROM Profile AS P JOIN Access AS A ON P.ID = A.ID
                 $(password[passCondition][2]) $conditions ;
             """ 
-            result = Common.execute(connection, sqlCmd, accessLvl, false)
+            result = Common.execute(connection, sqlCmd, accessLvl)
             if result == 1 return 1; end
 
             conditions = conditions == "" ? "ALL" : conditions

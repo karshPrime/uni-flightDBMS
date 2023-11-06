@@ -136,10 +136,10 @@ module Show
 
         sqlCmd = "SELECT * FROM $view $conditions ;"
 
-        attributes = Common.execute(connection, "DESCRIBE $view;", accessLvl, true)
+        attributes = Common.execute(connection, "DESCRIBE $view;", accessLvl)
         (titles, titleSpace, border) = _title_details(attributes)
 
-        result = Common.execute(connection, sqlCmd, accessLvl, false)
+        result = Common.execute(connection, sqlCmd, accessLvl)
         if result == 1 return 1; end
 
         _print_result(result, titles, titleSpace, border)

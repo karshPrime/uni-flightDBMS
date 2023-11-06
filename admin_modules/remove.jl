@@ -16,7 +16,7 @@ module Remove
 
         sqlCmd = "DELETE FROM $table WHERE $primaryKey = $id;"
 
-        result = Common.execute(connection, sqlCmd, accessLvl, false)
+        result = Common.execute(connection, sqlCmd, accessLvl)
 
         return result == 1 ? 1 : ["Remove",table,"FOR ID=$id"]
     end

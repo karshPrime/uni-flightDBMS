@@ -9,7 +9,7 @@ module Add
         table = Common.enter_a_table(userInput, "add", "to")
         if table == 1 return 1; end
 
-        attributes = Common.execute(connection, "DESCRIBE $table;", accessLvl, true)
+        attributes = Common.execute(connection, "DESCRIBE $table;", accessLvl)
         
         data = Dict{String, String}()
         
@@ -29,7 +29,7 @@ module Add
         info = join(values(data), "','")
         
         sqlCmd = """INSERT INTO $table ($columns) VALUES ('$info');"""
-        result = Common.execute(connection, sqlCmd, accessLvl, false)
+        result = Common.execute(connection, sqlCmd, accessLvl)
 
         return result == 1 ? 1 : ["Add", table, "FOR ID=$(data["ID"])"]
     end
