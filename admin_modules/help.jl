@@ -133,7 +133,7 @@ module Help
             [
                 (0, "table", "Get general information"),
                 (1, "add", "Add entry to a table"),
-                (2, "edit", "Modify existing entry in a table"),
+                (1, "edit", "Modify existing entry in a table"),
                 (2, "remove", "Remove entries from a table"),
                 (0, "show", "View specific entries"),
                 (3, "staff", "Manage employeed staff"),

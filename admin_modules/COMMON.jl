@@ -22,17 +22,10 @@ module Common
         "flight"   => "HFlight"
     )
 
-    #? view names for associates
-    associateView = Dict(
-        "crew"     => "ACrew",
-        "flight"   => "AFlight",
-        "airstaff" => "AAirStaff",
-    )
-
     #? defines views for different roles/accessLvl
     users = Dict(
         0 => helpdeskView,
-        1 => associateView,
+        1 => tableNames,
         2 => tableNames, # since manager has access to all
         3 => tableNames  # and so does the executive
     )

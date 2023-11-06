@@ -77,7 +77,7 @@ module Table
 
     #? table name from view name
     function _table_name(title)
-        if title in ["HFlight","HPilot","HPlane","ACrew","AFlight","AAirStaff"]
+        if title in ["HFlight","HPilot","HPlane"]
             return title[2:end]
         end
 

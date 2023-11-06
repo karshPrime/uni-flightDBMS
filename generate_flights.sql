@@ -136,18 +136,11 @@ SET DEFAULT ROLE rHelpdesk TO helpdesk;
 
 
 --* Associate permissions
-CREATE VIEW ACrew AS SELECT ID, staffCount, pilotID, coPilotID FROM flight_db.Crew;
-CREATE VIEW AFlight AS SELECT ID, hasVIP, planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood FROM flight_db.Flight;
-CREATE VIEW AAirStaff AS SELECT ID, fName, lName, age, gender, nativeLanguage, crewID FROM flight_db.AirStaff;
-
-GRANT SELECT, UPDATE (pilotID, coPilotID) ON flight_db.Crew TO rAssociate;
-GRANT SELECT, UPDATE (planeID, crewID, departure, destination, takeOffTime, takeOffDate, duration, routeType, hasFood) ON flight_db.Flight TO rAssociate;
-GRANT SELECT, UPDATE (crewID) ON flight_db.AirStaff TO rAssociate;
+GRANT SELECT, UPDATE ON flight_db.Crew TO rAssociate;
+GRANT SELECT, UPDATE, INSERT ON flight_db.Flight TO rAssociate;
+GRANT SELECT, INSERT ON flight_db.AirStaff TO rAssociate;
 GRANT SELECT, INSERT ON flight_db.Plane TO rAssociate; 
 GRANT SELECT, INSERT ON flight_db.Pilot TO rAssociate; 
-GRANT SELECT ON ACrew TO rAssociate;
-GRANT SELECT ON AFlight TO rAssociate;
-GRANT SELECT ON AAirStaff TO rAssociate;
 
 GRANT rAssociate TO associate;
 SET DEFAULT ROLE rAssociate TO associate;
