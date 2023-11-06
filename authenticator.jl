@@ -9,7 +9,7 @@ module Auth
     _host = "172.17.0.2" #* host IP
 
     #? only allowing these functions to be accessiable from other files
-    export authenticate, connect, log, public
+    export authenticate, connect, log, public, logout
 
     #? connect with the admin database as system
     #! private function; can be accessed only from within this file
@@ -47,13 +47,26 @@ module Auth
         appConnect = _connect_as_app()
 
         getPass = """SELECT password from Authentication WHERE id="$userID";"""
-        realPass = _readSQL(DBInterface.execute(appConnect, getPass))
+        
+        realPass = ""
+        try
+            realPass = _readSQL(DBInterface.execute(appConnect, getPass))
+        catch
+            return 1
+        end
 
         if realPass == userPass
             session_token = _token_gen()
-
             buffer_token_cmd = """INSERT INTO Session VALUES ("$userID", "$session_token");"""
-            DBInterface.execute(appConnect, buffer_token_cmd)
+            allow = true
+
+            try 
+                DBInterface.execute(appConnect, buffer_token_cmd)
+            catch
+                printstyled("\n! User is already logged in !"; color = :red)
+                log(userID, ["LogIn","---","Fail: Multiple","---"])
+                return 1
+            end
             DBInterface.close!
 
             return session_token
@@ -71,8 +84,7 @@ module Auth
         storedToken = _readSQL(DBInterface.execute(appConnect, getStoredToken))
 
         if storedToken == token
-            token_expire = """DELETE FROM Session WHERE userID="$userid";"""
-            DBInterface.execute(appConnect, token_expire)
+            log(userid, ["LogIn","---","Success","---"])
 
             getAccess = """SELECT accessLvl from Access WHERE ID="$userid";"""
             accessLvl = _readSQL(DBInterface.execute(appConnect, getAccess))
@@ -99,6 +111,7 @@ module Auth
         DBInterface.close!
 
         printstyled("! AUTHENTICATION FAILED. MODIFIED INTERFACE DETECTED !\n"; color = :red)
+        log(userID, ["LogIn","---","Fail: Modified Client","---"])
         return "ERROR" # will break the interface program
     end
 
@@ -121,6 +134,14 @@ module Auth
         appConnect = _connect_as_app()
         DBInterface.execute(appConnect, command)
         DBInterface.close(appConnect)
+    end
+
+    function logout(userid)
+        appConnect = _connect_as_app()
+        token_expire = """DELETE FROM Session WHERE userID="$userid";"""
+        DBInterface.execute(appConnect, token_expire)
+
+        log(userid, ["LogOut","---","---","---"])
     end
 
     #? connect to the database as public user

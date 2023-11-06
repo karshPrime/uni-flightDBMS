@@ -61,7 +61,6 @@ function main()
         else
             (connection, username, accessLvl) = Auth.connect(userid, token)
             printstyled("\nWelcome $username :.:.:.:.:.:\n"; color = :yellow)
-            Auth.log(userid, ["LogIn","---","---","---"])
             break #! stop loop if login is successful
         end
     end
@@ -71,7 +70,7 @@ function main()
 
         if length(userInput) > 0
             if userInput[1] == "x" #* quit
-                Auth.log(userid, ["LogOut","---","---","---"])
+                Auth.logout(userid)
                 DBInterface.close!
                 printstyled("\nGoodbye $username...\n"; color = :light_blue)
                 println("logged out\n")
