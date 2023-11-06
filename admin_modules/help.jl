@@ -72,7 +72,7 @@ module Help
                 (0, "-t", "takeOffTime", "Departure time"),
                 (0, "-d", "takeOffDate", "Departure date"),
                 (0, "-j", "duration", "Journey duration"),
-                (1, "-f", "routeType", "Indicates whether it is a domestic or international flight"),
+                (1, "-r", "routeType", "Indicates whether it is a domestic or international flight"),
                 (1, "-vip", "hasVIP", "Indicates whether a VIP is taking this flight"),
                 (0, "-f", "hasFood", "Indicates whether the flight serves food")
             ],
