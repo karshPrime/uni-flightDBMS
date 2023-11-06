@@ -87,11 +87,11 @@ CREATE TABLE `AirStaff` (
 -- auto trigger increment staffCount in Crew table when a new airstaff uses its key
 DELIMITER $$
 CREATE TRIGGER updateStaffCount
-AFTER INSERT ON AirStaff
+BEFORE INSERT ON AirStaff
 FOR EACH ROW
 BEGIN
     DECLARE crew_count INT;
-    SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = NEW.crewID);
+    SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = NEW.crewID) + 1;
     UPDATE Crew SET staffCount = crew_count WHERE ID = NEW.crewID;
 END $$
 DELIMITER ;
@@ -99,11 +99,11 @@ DELIMITER ;
 -- auto trigger decrement staffCount in Crew table when a airstaff with its key is deleted
 DELIMITER $$
 CREATE TRIGGER decrementStaffCount
-AFTER DELETE ON AirStaff
+BEFORE DELETE ON AirStaff
 FOR EACH ROW
 BEGIN
     DECLARE crew_count INT;
-    SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = OLD.crewID);
+    SET crew_count = (SELECT COUNT(*) FROM AirStaff WHERE crewID = OLD.crewID) - 1;
     UPDATE Crew SET staffCount = crew_count WHERE ID = OLD.crewID;
 END $$
 DELIMITER ;
