@@ -50,7 +50,7 @@ git clone https://github.com/karshPrime/uni-flightDBMS.git
 
 </details>
 
-## Method 2: Using Docker Containers (reccomended)
+## Method 2: Using Docker Containers (recommended)
 <details>
 <summary> Setting the project on docker containers using the Dockerfile provided. 
 </summary>
@@ -68,8 +68,9 @@ $ docker inspect projectServer | grep -i ipaddress
 Building Julia container with all dependencies configured
 ```shell
 $ docker build -t client-img .
-$ docker run -it --name clientAppFInal -v "C:\\Users\\user33\\Programs\\flight-dbms:/app" client-img
+$ docker run -it --name clientAppFInal -v "project_path:/app" client-img
 ```
+\*\* replace `project_path` with the actual directory, eg: `"C:\\Users\\user33\\Programs\\flight-dbms:/app"` <br>
 
 With this, you would be in the container shell. To continue connect to the other container MySQL using:
 ```shell
